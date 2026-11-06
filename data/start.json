@@ -1,0 +1,397 @@
+{
+ "sandvik": {
+  "kilde_grades": "https://www.sandvik.coromant.com/en-us/tools/inserts-grades/insert-grade-information/turning-inserts-grades",
+  "kilde_spaanbryder": "Sandviks eget katalog: felterne Chip breaker og beskrivelse (finishing / pre-machining with demand on surface / roughing).",
+  "verificeret": "Hver kombination er tjekket med præcis søgning hos Sandvik for WNMG 08 04 12, CNMG 12 04 08, DNMG 15 04 08, TNMG 16 04 08 og SNMG 12 04 08.",
+  "forslag": {
+   "P": {
+    "slut": [
+     {
+      "brk": "PF",
+      "kval": "4425",
+      "note": "GC4425: førstevalg til stål, slut til skrub.",
+      "rolle": "foerst"
+     }
+    ],
+    "medium": [
+     {
+      "brk": "PM",
+      "kval": "4425",
+      "note": "GC4425: førstevalg til stål.",
+      "rolle": "foerst"
+     },
+     {
+      "brk": "PM",
+      "kval": "4415",
+      "note": "GC4415: mere varmebestandig, kontinuerligt til let afbrudt snit i stabile forhold.",
+      "rolle": "alt"
+     }
+    ],
+    "skrub": [
+     {
+      "brk": "PR",
+      "kval": "4425",
+      "note": "GC4425: førstevalg til stål, også afbrudte snit.",
+      "rolle": "foerst"
+     },
+     {
+      "brk": "PR",
+      "kval": "4335",
+      "note": "GC4335: skrub i afbrudte snit og ugunstige forhold.",
+      "rolle": "alt"
+     }
+    ]
+   },
+   "M": {
+    "slut": [
+     {
+      "brk": "MM",
+      "kval": "2515",
+      "note": "GC2515: førstevalg til slut i rustfrit (slut til let skrub). MM er den letteste negative spånbryder, jeg har bekræftet til denne kvalitet.",
+      "rolle": "foerst"
+     }
+    ],
+    "medium": [
+     {
+      "brk": "MM",
+      "kval": "2025",
+      "note": "GC2025: førstevalg fra semi-slut til skrub i rustfrit.",
+      "rolle": "foerst"
+     },
+     {
+      "brk": "MM",
+      "kval": "2515",
+      "note": "GC2515: slut til let skrub.",
+      "rolle": "alt"
+     }
+    ],
+    "skrub": [
+     {
+      "brk": "MR",
+      "kval": "2025",
+      "note": "GC2025: førstevalg fra semi-slut til skrub i rustfrit.",
+      "rolle": "foerst"
+     },
+     {
+      "brk": "MR",
+      "kval": "2220",
+      "note": "GC2220: mere slidstyrke end GC2025 ved semi-slut til skrub.",
+      "rolle": "alt"
+     }
+    ]
+   },
+   "K": {
+    "slut": [
+     {
+      "brk": "KM",
+      "kval": "3210",
+      "note": "GC3210: høj fladeslidstyrke, gode til gennemsnitlige forhold, alle støbejernstyper.",
+      "rolle": "foerst"
+     }
+    ],
+    "medium": [
+     {
+      "brk": "KM",
+      "kval": "3210",
+      "note": "GC3210: høj fladeslidstyrke, gode til gennemsnitlige forhold.",
+      "rolle": "foerst"
+     },
+     {
+      "brk": "KM",
+      "kval": "3225",
+      "note": "GC3225: høj æg-sikkerhed, gennemsnitlige til svære forhold, let til kraftigt afbrudt snit.",
+      "rolle": "alt"
+     }
+    ],
+    "skrub": [
+     {
+      "brk": "KR",
+      "kval": "3225",
+      "note": "GC3225: høj æg-sikkerhed, svære forhold og afbrudte snit.",
+      "rolle": "foerst"
+     },
+     {
+      "brk": "KR",
+      "kval": "3210",
+      "note": "GC3210: gode til gennemsnitlige forhold.",
+      "rolle": "alt"
+     }
+    ]
+   },
+   "S": {
+    "slut": [
+     {
+      "brk": "SF",
+      "kval": "1205",
+      "note": "GC1205: PVD til aldrede nikkelbaserede legeringer. Findes ikke i SNMG.",
+      "rolle": "foerst",
+      "sub": [
+       "S1"
+      ]
+     }
+    ],
+    "medium": [
+     {
+      "brk": "SM",
+      "kval": "1205",
+      "note": "GC1205: PVD til aldrede nikkelbaserede legeringer.",
+      "rolle": "foerst",
+      "sub": [
+       "S1"
+      ]
+     },
+     {
+      "brk": "SM",
+      "kval": "1210",
+      "note": "GC1210: supplerer GC1205, når der kræves mere sejhed.",
+      "rolle": "alt",
+      "sub": [
+       "S1"
+      ]
+     },
+     {
+      "brk": "SM",
+      "kval": "H13A",
+      "note": "H13A: ubelagt hårdmetal til titanlegeringer, medium til skrub.",
+      "rolle": "foerst",
+      "sub": [
+       "S2"
+      ]
+     }
+    ],
+    "skrub": [
+     {
+      "brk": "SM",
+      "kval": "1210",
+      "note": "GC1210: mere sejhed end GC1205.",
+      "rolle": "foerst",
+      "sub": [
+       "S1"
+      ]
+     },
+     {
+      "brk": "SM",
+      "kval": "H13A",
+      "note": "H13A: ubelagt hårdmetal til titanlegeringer, medium til skrub.",
+      "rolle": "foerst",
+      "sub": [
+       "S2"
+      ]
+     }
+    ]
+   },
+   "N": {
+    "slut": [
+     {
+      "brk": "",
+      "kval": "H10",
+      "note": "Ubelagt hårdmetal, skrub til slut i aluminiumslegeringer.",
+      "rolle": "foerst"
+     },
+     {
+      "brk": "",
+      "kval": "CD05",
+      "note": "PCD til slut/semi-slut af slibende materialer (aluminium med højt Si, MMC, glasfiber).",
+      "rolle": "alt"
+     }
+    ],
+    "medium": [
+     {
+      "brk": "",
+      "kval": "H10",
+      "note": "Ubelagt hårdmetal, skrub til slut i aluminiumslegeringer.",
+      "rolle": "foerst"
+     },
+     {
+      "brk": "",
+      "kval": "CD10",
+      "note": "PVD til stabile forhold og høj afspåning, medium til skrub.",
+      "rolle": "alt"
+     },
+     {
+      "brk": "",
+      "kval": "CD05",
+      "note": "PCD til slut/semi-slut af slibende materialer (aluminium med højt Si, MMC, glasfiber).",
+      "rolle": "alt"
+     }
+    ],
+    "skrub": [
+     {
+      "brk": "",
+      "kval": "H10",
+      "note": "Ubelagt hårdmetal, skrub til slut i aluminiumslegeringer.",
+      "rolle": "foerst"
+     },
+     {
+      "brk": "",
+      "kval": "CD10",
+      "note": "PVD til stabile forhold og høj afspåning, medium til skrub.",
+      "rolle": "alt"
+     }
+    ]
+   },
+   "H": {
+    "slut": [
+     {
+      "brk": "",
+      "kval": "CB7105",
+      "note": "CBN. Lav tilspænding, kontinuerlige snit, stabile forhold, højeste hastigheder (indsats- og induktionshærdet stål).",
+      "rolle": "foerst"
+     }
+    ],
+    "medium": [
+     {
+      "brk": "",
+      "kval": "CB7115",
+      "note": "CBN. Høj tilspænding og/eller snitdybde, kontinuerlig til let afbrudt snit.",
+      "rolle": "alt"
+     },
+     {
+      "brk": "",
+      "kval": "CB7125",
+      "note": "CBN. Let til medium afbrudt snit (affasede kanter).",
+      "rolle": "alt"
+     }
+    ],
+    "skrub": [
+     {
+      "brk": "",
+      "kval": "CB7115",
+      "note": "CBN. Høj tilspænding og/eller snitdybde, kontinuerlig til let afbrudt snit.",
+      "rolle": "alt"
+     },
+     {
+      "brk": "",
+      "kval": "CB7135",
+      "note": "CBN. Kraftigt afbrudt snit (uaffasede kanter).",
+      "rolle": "alt"
+     }
+    ]
+   }
+  }
+ },
+ "palbit": {
+  "_kilde": {
+   "M_S": "https://www.palbit.pt/uploads/Turning/Palbit-CHIPBREAKERS-FOR-STAINLESS-STEEL-HRSA-TURNING.pdf",
+   "P_K": "Fra en forhandlers udtræk af Palbits katalog (ikke palbit.pt selv). Ikke bekræftet."
+  },
+  "M": {
+   "slut": {
+    "brk": [
+     "GSF"
+    ],
+    "kval": [
+     "PHH905",
+     "PHH910"
+    ],
+    "note": "GSF = præcisionsfinish på negative plader. PHH905 er optimeret til finish og finfinish, PHH910 til rustfrit og HRSA fra medium drejning til finish.",
+    "status": "kilde"
+   },
+   "medium": {
+    "brk": [
+     "GS"
+    ],
+    "kval": [
+     "PHH910",
+     "PHH920"
+    ],
+    "note": "GS = semi-slut og semi-skrub. PHH910 til kontinuerligt til let afbrudt snit, PHH920 til generel drejning af rustfrit.",
+    "status": "kilde"
+   },
+   "skrub": {
+    "brk": [
+     "GS"
+    ],
+    "kval": [
+     "PHH920",
+     "PHH910"
+    ],
+    "note": "GS er Palbits mest skrubbende spånbryder til rustfrit/HRSA i PDF'en. PHH920 til generel drejning.",
+    "status": "kilde"
+   }
+  },
+  "P": {
+   "slut": {
+    "brk": [
+     "MF"
+    ],
+    "note": "MF = semi-slut i stål. Kvalitet: vælg blandt dem, der findes. Palbit skriver ikke på sin side, hvilken der passer til slut.",
+    "status": "ikke-bekraeftet"
+   },
+   "medium": {
+    "brk": [
+     "PM"
+    ],
+    "note": "PM = medium finish i stål.",
+    "status": "ikke-bekraeftet"
+   },
+   "skrub": {
+    "brk": [
+     "MR",
+     "HR"
+    ],
+    "note": "MR = medium skrub, HR = kraftig skrub.",
+    "status": "ikke-bekraeftet"
+   }
+  },
+  "K": {
+   "slut": {
+    "brk": [
+     "ST"
+    ],
+    "note": "ST = semi-slut i støbejern.",
+    "status": "ikke-bekraeftet"
+   },
+   "medium": {
+    "brk": [
+     "ST"
+    ],
+    "note": "ST til støbejern.",
+    "status": "ikke-bekraeftet"
+   },
+   "skrub": {
+    "brk": [
+     "ST",
+     "HR"
+    ],
+    "note": "ST til skrub, HR til kraftig skrub.",
+    "status": "ikke-bekraeftet"
+   }
+  },
+  "S": {
+   "slut": {
+    "brk": [
+     "GSF"
+    ],
+    "kval": [
+     "PHH905",
+     "PHH910"
+    ],
+    "note": "GSF = præcisionsfinish på negative plader. PHH905 er optimeret til finish og finfinish, PHH910 til rustfrit og HRSA fra medium drejning til finish.",
+    "status": "kilde"
+   },
+   "medium": {
+    "brk": [
+     "GS"
+    ],
+    "kval": [
+     "PHH910",
+     "PHH920"
+    ],
+    "note": "GS = semi-slut og semi-skrub. PHH910 til kontinuerligt til let afbrudt snit, PHH920 til generel drejning af rustfrit.",
+    "status": "kilde"
+   },
+   "skrub": {
+    "brk": [
+     "GS"
+    ],
+    "kval": [
+     "PHH920",
+     "PHH910"
+    ],
+    "note": "GS er Palbits mest skrubbende spånbryder til rustfrit/HRSA i PDF'en. PHH920 til generel drejning.",
+    "status": "kilde"
+   }
+  }
+ }
+}

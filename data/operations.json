@@ -1,0 +1,45 @@
+{
+ "operations": [
+  {
+   "id": "turn_od",
+   "navn": "Drejning – udvendig",
+   "ikon": "⭕",
+   "drejning": true
+  },
+  {
+   "id": "turn_id",
+   "navn": "Drejning – indvendig (boring/udboring)",
+   "ikon": "🕳️",
+   "drejning": true
+  },
+  {
+   "id": "mill",
+   "navn": "Fræsning",
+   "ikon": "⚙️",
+   "drejning": false
+  },
+  {
+   "id": "drill",
+   "navn": "Boring (skifteplattebor)",
+   "ikon": "🎯",
+   "drejning": false
+  }
+ ],
+ "bearbejdning": [
+  {
+   "id": "skrub",
+   "navn": "Skrub",
+   "ap": "stor ap, høj tilspænding"
+  },
+  {
+   "id": "medium",
+   "navn": "Medium / semi-slut",
+   "ap": "middel ap"
+  },
+  {
+   "id": "slut",
+   "navn": "Slut",
+   "ap": "lille ap, lav tilspænding"
+  }
+ ]
+}

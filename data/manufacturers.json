@@ -1,0 +1,49 @@
+{
+ "_note": "Forsiderne er givet af brugeren. Ekstra-links er fundet via websøgning, men ikke testet (sandkassen kunne ikke nå siderne). Sandvik ToolGuide og Palbit: intet officielt direkte link fundet.",
+ "makers": [
+  {
+   "id": "palbit",
+   "navn": "Palbit",
+   "url": "https://www.palbit.pt/en/home",
+   "verificeret": true,
+   "tip": "Brug katalog/produktsøgning på siden.",
+   "extra": []
+  },
+  {
+   "id": "ceratizit",
+   "navn": "CERATIZIT",
+   "url": "https://cuttingtools.ceratizit.com/dk/da.html",
+   "verificeret": true,
+   "tip": "Brug produktsøgning eller 'Tool Finder' hvis tilgængelig.",
+   "extra": [
+    {
+     "label": "E-katalog (engelsk)",
+     "url": "https://cuttingtools.ceratizit.com/gb/en/services/catalogue.html",
+     "testet": false
+    }
+   ]
+  },
+  {
+   "id": "sandvik",
+   "navn": "Sandvik Coromant",
+   "url": "https://www.sandvik.coromant.com/da-dk",
+   "verificeret": true,
+   "tip": "Brug 'Find produkt'/CoroPlus-værktøjer på siden.",
+   "extra": []
+  },
+  {
+   "id": "kennametal",
+   "navn": "Kennametal",
+   "url": "https://www.kennametal.com/us/en/home.html",
+   "verificeret": true,
+   "tip": "Brug 'Product Catalog' / NOVO på siden.",
+   "extra": [
+    {
+     "label": "NOVO tool selector",
+     "url": "https://www.kennametal.com/us/en/resources/novo/select.html",
+     "testet": false
+    }
+   ]
+  }
+ ]
+}

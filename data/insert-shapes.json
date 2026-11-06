@@ -1,0 +1,151 @@
+{
+ "_note": "Vejledende. Baseret på ISO 1832 – tjek altid mod fabrikantens katalog.",
+ "iso1832": {
+  "form": {
+   "C": "80° rombe",
+   "D": "55° rombe",
+   "E": "75° rombe",
+   "K": "55° parallelogram",
+   "R": "Rund",
+   "S": "Kvadrat (90°)",
+   "T": "Trekant (60°)",
+   "V": "35° rombe",
+   "W": "80° trigon (3 skær pr. side)"
+  },
+  "frivinkel": {
+   "N": "0° (negativ)",
+   "B": "5°",
+   "C": "7°",
+   "P": "11°",
+   "D": "15°",
+   "E": "20°",
+   "F": "25°",
+   "G": "30°",
+   "A": "3°"
+  },
+  "type": {
+   "N": "Uden hul, uden spånbryder",
+   "R": "Uden hul, spånbryder 1 side",
+   "F": "Uden hul, spånbryder 2 sider",
+   "A": "Hul, uden spånbryder",
+   "M": "Hul, spånbryder 1 side",
+   "G": "Hul, spånbryder 2 sider",
+   "T": "Hul m. forsænkning, spånbryder 1 side",
+   "W": "Hul m. forsænkning, uden spånbryder",
+   "X": "Special"
+  },
+  "tolerance": {
+   "M": "Støbt/sintret, gængs til drejning (±0,08–0,18 på IC)",
+   "G": "Slebet periferi (højere præcision)",
+   "C": "Præcis",
+   "E": "Præcis",
+   "U": "Grov/mindre præcis"
+  },
+  "tykkelse": {
+   "01": "1,59",
+   "02": "2,38",
+   "03": "3,18",
+   "T3": "3,97",
+   "04": "4,76",
+   "06": "6,35",
+   "07": "7,94",
+   "09": "9,52"
+  },
+  "radius": {
+   "04": 0.4,
+   "08": 0.8,
+   "12": 1.2,
+   "16": 1.6,
+   "24": 2.4,
+   "00": 0
+  },
+  "ic": {
+   "06": "6,35",
+   "09": "9,525",
+   "12": "12,7",
+   "16": "15,875",
+   "19": "19,05",
+   "25": "25,4"
+  }
+ },
+ "turning": [
+  {
+   "kode": "CNMG",
+   "info": "80° rombe, negativ. Robust, 4 skær. Klassisk allround/skrub. Kan ikke komme ind i skarpe hjørner."
+  },
+  {
+   "kode": "CCMT",
+   "info": "80° rombe, positiv, 2 skær. Slut/medium, svagere maskiner, indvendig."
+  },
+  {
+   "kode": "DNMG",
+   "info": "55° rombe, negativ. Profilering/kopiering, 4 skær."
+  },
+  {
+   "kode": "DCMT",
+   "info": "55° rombe, positiv. Profil slut, indvendig boring."
+  },
+  {
+   "kode": "WNMG",
+   "info": "80° trigon, negativ. 6 skær, god økonomi, god skrub/medium."
+  },
+  {
+   "kode": "TNMG",
+   "info": "60° trekant, negativ. 6 skær, universel, god til indvendig."
+  },
+  {
+   "kode": "TCMT",
+   "info": "60° trekant, positiv. Indvendig/slut."
+  },
+  {
+   "kode": "VNMG",
+   "info": "35° rombe, negativ. Kopiering/slut i svære kontaktforhold."
+  },
+  {
+   "kode": "VBMT",
+   "info": "35° rombe, positiv. Fin kopiering og slut."
+  },
+  {
+   "kode": "SNMG",
+   "info": "90° kvadrat, negativ. 8 skær, kraftig skrub."
+  },
+  {
+   "kode": "RCMT",
+   "info": "Rund, positiv. Store radier, robust skær, høj Ra ved lav tilspænding."
+  },
+  {
+   "kode": "Andet",
+   "info": "Plattetype der ikke står her. Skriv den selv i koden."
+  }
+ ],
+ "andre": {
+  "mill": [
+   {
+    "kode": "APMT",
+    "info": "Skulderfræs, 90°. Eksempel – tjek mod producent."
+   },
+   {
+    "kode": "SEKT/SEMT",
+    "info": "Planfræs, firkantet platte. Eksempel."
+   },
+   {
+    "kode": "SDMT",
+    "info": "Planfræs. Eksempel."
+   },
+   {
+    "kode": "RPMT",
+    "info": "Rund platte. Kopi/ruhed."
+   },
+   {
+    "kode": "Andet",
+    "info": "Anden plattetype."
+   }
+  ],
+  "drill": [
+   {
+    "kode": "Skifteplattebor",
+    "info": "Platteform er producentspecifik – vælges i producentens selektor."
+   }
+  ]
+ }
+}

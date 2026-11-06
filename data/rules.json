@@ -1,0 +1,26 @@
+{
+ "_note":"Vejledende tommelfingerregler – ikke fabrikantdata.",
+ "spaanform":[
+  {"id":"kontinuerlig","navn":"Kontinuerlig spån","forklaring":"Lang, sammenhængende spån. OK til slut i blødt materiale, kan filtre sammen i skrub."},
+  {"id":"brudt","navn":"Brudt spån","forklaring":"Kort, kontrolleret spån. Det mest ønskede ved automatisk drift."},
+  {"id":"kombi","navn":"Kombi (varierende ap/f)","forklaring":"Bred brydning i en geometri der håndterer varierende ap og tilspænding."}
+ ],
+ "spaanbryder":{
+  "skrub":{"kontinuerlig":"Åben/let positiv, stor ap, ofte K/N-kvalitet.","brudt":"Kraftig skrub-spånbryder (R-type) med forstærket æg.","kombi":"Medium/skrub allround-bryder, bred ap/f-vindue."},
+  "medium":{"kontinuerlig":"Åben medium-bryder, ofte positiv geometri.","brudt":"Medium spånbryder (M-type).","kombi":"Universal-bryder (typisk 'medium/allround')."},
+  "slut":{"kontinuerlig":"Skarp finish-geometri, positiv.","brudt":"Finish-spånbryder, lille ap, tæt brydning.","kombi":"Finish/medium combo-bryder."}
+ },
+ "materialeNoter":{
+  "P":"Stort valg i bryder. Pas på lange spåner i lavt kulstof.",
+  "M":"Vælg skarp positiv geometri og stabil kvalitet. Undgå for lav f (strain hardening).",
+  "K":"Kort spån af sig selv; vælg slidstærk kvalitet. Spånbryder ofte mindre vigtig.",
+  "N":"Skarp, poleret, ubelagt eller diamantbelagt. Høj vc.",
+  "S":"Lav vc, skarp positiv, stabilt og køligt. Overvej højtryk kølemiddel.",
+  "H":"CBN eller keramik. Meget lav ap og stabil opspænding."
+ },
+ "radius":{
+  "tommel":"f bør normalt ligge omkring 0,5 × r, og op til ca. 2/3 × r i skrub.",
+  "slutMaxF":0.5,
+  "skrubMaxF":0.67
+ }
+}

@@ -1,0 +1,29 @@
+{
+ "groups": [
+  {"id":"P","navn":"P – Stål","farve":"#2f6fdb","spaan":"Typisk lange spåner (lavt kulstof er sejt)","sub":[
+   {"id":"P1","navn":"Ulegeret stål (lavt kulstof)"},
+   {"id":"P2","navn":"Lav-/medielegeret stål, bonitet"},
+   {"id":"P3","navn":"Højlegeret stål, værktøjsstål"},
+   {"id":"P4","navn":"Støbt stål"},
+   {"id":"P5","navn":"Ferritisk/martensitisk rustfrit (stål-lignende)"}]},
+  {"id":"M","navn":"M – Rustfrit","farve":"#e0b400","spaan":"Sej, sej-sammenhængende spån, trækker til opbygget æg","sub":[
+   {"id":"M1","navn":"Austenitisk rustfrit (fx 304/316)"},
+   {"id":"M2","navn":"Duplex / super-duplex"},
+   {"id":"M3","navn":"Støbt rustfrit"}]},
+  {"id":"K","navn":"K – Støbejern","farve":"#d33a3a","spaan":"Korte, brudte spåner af sig selv","sub":[
+   {"id":"K1","navn":"Gråt støbejern"},
+   {"id":"K2","navn":"Nodulært / sejjern (SG)"},
+   {"id":"K3","navn":"Malleabelt / CGI"}]},
+  {"id":"N","navn":"N – Ikke-jern","farve":"#2fa84f","spaan":"Lange, bløde spåner (aluminium) – kræver skarpt æg","sub":[
+   {"id":"N1","navn":"Aluminiumslegeringer"},
+   {"id":"N2","navn":"Kobber / messing / bronze"},
+   {"id":"N3","navn":"Plast / kompositter"}]},
+  {"id":"S","navn":"S – Varmefaste legeringer / titan","farve":"#8a5a2b","spaan":"Sejt, sammenhængende, varmt i skærezonen","sub":[
+   {"id":"S1","navn":"Nikkelbaserede (Inconel, Waspaloy m.fl.)"},
+   {"id":"S2","navn":"Titan og titanlegeringer"},
+   {"id":"S3","navn":"Koboltbaserede"}]},
+  {"id":"H","navn":"H – Hærdet materiale","farve":"#777777","spaan":"Korte/segmenterede spåner","sub":[
+   {"id":"H1","navn":"Hærdet stål (ca. 45–65 HRC)"},
+   {"id":"H2","navn":"Hærdet/kokille-støbejern"}]}
+ ]
+}

@@ -38,7 +38,7 @@ function r1(){
   app.innerHTML=`<h2>Materiale (ISO)</h2><div class="grid">${D.materials.groups.map(x=>`<button data-m="${x.id}" class="${S.mat===x.id?'sel':''}"><span class="badge" style="background:${x.farve}">${x.id}</span>${x.navn.replace(/^. – /,'')}</button>`).join('')}</div>
   ${g?`<h3>Undergruppe</h3><div class="grid">${g.sub.map(s=>`<button data-s="${s.id}" class="${S.sub===s.id?'sel':''}">${s.id} ${s.navn}</button>`).join('')}</div><p class="mut">${g.spaan}</p>`:''}
   ${nav(true,!!S.sub)}`;
-  app.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{S.mat=b.dataset.m;S.sub=null;save();render()});
+  app.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{S.mat=b.dataset.m;S.sub=null;if(S.mat!=='K'){S.shapes=S.shapes.filter(k=>!(D['insert-shapes'].turning.find(t=>t.kode===k)||{}).uspaanbryder);S.mdl={ic:'',tyk:'',rad:''}}save();render()});
   app.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{S.sub=b.dataset.s;save();render()});
   bindNav();
 }
@@ -53,8 +53,8 @@ function r2(){
   const L=shapesList(), I=D['insert-shapes'].iso1832;
   app.innerHTML=`<h2>Plattetype</h2><p class="mut">Vælg én type for at vælge præcis model. Vælger du ingen, gælder alle typer.</p>
   ${(()=>{const btn=s=>`<button data-sh="${s.kode}" class="${S.shapes.includes(s.kode)?'sel':''}"><b>${s.kode}</b><br><span class="mut">${s.info}</span></button>`;
-    const med=L.filter(s=>!s.uspaanbryder),uden=L.filter(s=>s.uspaanbryder);
-    return `${uden.length?'<h3>Med spånbryder</h3>':''}<div class="grid">${med.map(btn).join('')}</div>${uden.length?`<h3>Uden spånbryder (…A)</h3><div class="grid">${uden.map(btn).join('')}</div>`:''}`})()}
+    const med=L.filter(s=>!s.uspaanbryder),uden=S.mat==='K'?L.filter(s=>s.uspaanbryder):[];
+    return `${uden.length?'<h3>Med spånbryder</h3>':''}<div class="grid">${med.map(btn).join('')}</div>${!uden.length&&op()?.drejning?'<p class="mut">Platter uden spånbryder (DNMA, WNMA m.fl.) vises kun ved støbejern (K).</p>':''}${uden.length?`<h3>Uden spånbryder (…A)</h3><div class="grid">${uden.map(btn).join('')}</div>`:''}`})()}
   ${op()?.drejning?modelBygger(I):''}${nav(true,true)}`;
   app.querySelectorAll('[data-sh]').forEach(b=>b.onclick=()=>{
     const k=b.dataset.sh;S.shapes=S.shapes.includes(k)?S.shapes.filter(x=>x!==k):[...S.shapes,k];S.mdl={ic:'',tyk:'',rad:''};save();render()});

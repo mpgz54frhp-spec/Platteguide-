@@ -71,47 +71,88 @@
  "turning": [
   {
    "kode": "CNMG",
-   "info": "80° rombe, negativ. Robust, 4 skær. Klassisk allround/skrub. Kan ikke komme ind i skarpe hjørner."
+   "info": "80° rombe, negativ. Robust, 4 skær. Klassisk allround/skrub. Kan ikke komme ind i skarpe hjørner.",
+   "uspaanbryder": false
   },
   {
    "kode": "CCMT",
-   "info": "80° rombe, positiv, 2 skær. Slut/medium, svagere maskiner, indvendig."
+   "info": "80° rombe, positiv, 2 skær. Slut/medium, svagere maskiner, indvendig.",
+   "uspaanbryder": false
   },
   {
    "kode": "DNMG",
-   "info": "55° rombe, negativ. Profilering/kopiering, 4 skær."
+   "info": "55° rombe, negativ. Profilering/kopiering, 4 skær.",
+   "uspaanbryder": false
   },
   {
    "kode": "DCMT",
-   "info": "55° rombe, positiv. Profil slut, indvendig boring."
+   "info": "55° rombe, positiv. Profil slut, indvendig boring.",
+   "uspaanbryder": false
   },
   {
    "kode": "WNMG",
-   "info": "80° trigon, negativ. 6 skær, god økonomi, god skrub/medium."
+   "info": "80° trigon, negativ. 6 skær, god økonomi, god skrub/medium.",
+   "uspaanbryder": false
   },
   {
    "kode": "TNMG",
-   "info": "60° trekant, negativ. 6 skær, universel, god til indvendig."
+   "info": "60° trekant, negativ. 6 skær, universel, god til indvendig.",
+   "uspaanbryder": false
   },
   {
    "kode": "TCMT",
-   "info": "60° trekant, positiv. Indvendig/slut."
+   "info": "60° trekant, positiv. Indvendig/slut.",
+   "uspaanbryder": false
   },
   {
    "kode": "VNMG",
-   "info": "35° rombe, negativ. Kopiering/slut i svære kontaktforhold."
+   "info": "35° rombe, negativ. Kopiering/slut i svære kontaktforhold.",
+   "uspaanbryder": false
   },
   {
    "kode": "VBMT",
-   "info": "35° rombe, positiv. Fin kopiering og slut."
+   "info": "35° rombe, positiv. Fin kopiering og slut.",
+   "uspaanbryder": false
   },
   {
    "kode": "SNMG",
-   "info": "90° kvadrat, negativ. 8 skær, kraftig skrub."
+   "info": "90° kvadrat, negativ. 8 skær, kraftig skrub.",
+   "uspaanbryder": false
   },
   {
    "kode": "RCMT",
-   "info": "Rund, positiv. Store radier, robust skær, høj Ra ved lav tilspænding."
+   "info": "Rund, positiv. Store radier, robust skær, høj Ra ved lav tilspænding.",
+   "uspaanbryder": false
+  },
+  {
+   "kode": "CNMA",
+   "info": "80° rombe, negativ, UDEN spånbryder (hul). Plan/glat flade.",
+   "uspaanbryder": true
+  },
+  {
+   "kode": "DNMA",
+   "info": "55° rombe, negativ, UDEN spånbryder (hul).",
+   "uspaanbryder": true
+  },
+  {
+   "kode": "WNMA",
+   "info": "80° trigon, negativ, UDEN spånbryder (hul). 6 skær.",
+   "uspaanbryder": true
+  },
+  {
+   "kode": "TNMA",
+   "info": "60° trekant, negativ, UDEN spånbryder (hul).",
+   "uspaanbryder": true
+  },
+  {
+   "kode": "VNMA",
+   "info": "35° rombe, negativ, UDEN spånbryder (hul).",
+   "uspaanbryder": true
+  },
+  {
+   "kode": "SNMA",
+   "info": "90° kvadrat, negativ, UDEN spånbryder (hul).",
+   "uspaanbryder": true
   },
   {
    "kode": "Andet",
@@ -276,5 +317,6 @@
     "std": false
    }
   }
- }
+ },
+ "_note_A": "Type-bogstav A i ISO 1832 = hul, uden spånbryder. Vejledende – tjek katalog."
 }

@@ -47,11 +47,14 @@ function modelKode(){
   const b=baseKode(); if(!b)return S.shapes.length?S.shapes.join(', '):'';
   const m=S.mdl||{}; return b+(m.ic||'__')+(m.tyk||'__')+(m.rad||'__');
 }
+const utenBryder=()=>{const b=baseKode();return !!b&&b[3]==='A'};
 const modelKomplet=()=>{const b=baseKode(),m=S.mdl||{};return !!(b&&m.ic&&m.tyk&&m.rad)};
 function r2(){
   const L=shapesList(), I=D['insert-shapes'].iso1832;
   app.innerHTML=`<h2>Plattetype</h2><p class="mut">Vælg én type for at vælge præcis model. Vælger du ingen, gælder alle typer.</p>
-  <div class="grid">${L.map(s=>`<button data-sh="${s.kode}" class="${S.shapes.includes(s.kode)?'sel':''}"><b>${s.kode}</b><br><span class="mut">${s.info}</span></button>`).join('')}</div>
+  ${(()=>{const btn=s=>`<button data-sh="${s.kode}" class="${S.shapes.includes(s.kode)?'sel':''}"><b>${s.kode}</b><br><span class="mut">${s.info}</span></button>`;
+    const med=L.filter(s=>!s.uspaanbryder),uden=L.filter(s=>s.uspaanbryder);
+    return `${uden.length?'<h3>Med spånbryder</h3>':''}<div class="grid">${med.map(btn).join('')}</div>${uden.length?`<h3>Uden spånbryder (…A)</h3><div class="grid">${uden.map(btn).join('')}</div>`:''}`})()}
   ${op()?.drejning?modelBygger(I):''}${nav(true,true)}`;
   app.querySelectorAll('[data-sh]').forEach(b=>b.onclick=()=>{
     const k=b.dataset.sh;S.shapes=S.shapes.includes(k)?S.shapes.filter(x=>x!==k):[...S.shapes,k];S.mdl={ic:'',tyk:'',rad:''};save();render()});
@@ -92,7 +95,7 @@ function r4(){
   for(const id of ['r','f','ap','vc'])$('#'+id).oninput=e=>{S[id]=e.target.value;save()};
   bindNav();
 }
-function soeg(x){const q=['site:'+x.dom,modelKomplet()?modelKode():(S.shapes.join(' OR ')||'indexable turning inserts'),S.brk,S.kval].filter(Boolean).join(' ');return 'https://www.google.com/search?q='+encodeURIComponent(q)}
+function soeg(x){const q=['site:'+x.dom,modelKomplet()?modelKode():(S.shapes.join(' OR ')||'indexable turning inserts'),utenBryder()?'':S.brk,S.kval].filter(Boolean).join(' ');return 'https://www.google.com/search?q='+encodeURIComponent(q)}
 const num=v=>parseFloat(String(v).replace(',','.'));
 function r5(){
   const g=grp(), R=D.rules, m=D.manufacturers.makers;
@@ -109,21 +112,21 @@ function r5(){
   const shapes=S.shapes.length?S.shapes.join(', '):'alle typer';
     const resume=[
     `Operation: ${op().navn}`,`Materiale: ${S.sub} ${g.sub.find(s=>s.id===S.sub).navn}`,
-    `Plattetype: ${shapes}${modelKomplet()?' ('+modelKode()+')':''}`,S.brk?`Spånbryder: ${S.brk}`:'',S.kval?`Kvalitet: ${S.kval}`:'',
+    `Plattetype: ${shapes}${modelKomplet()?' ('+modelKode()+')':''}`,S.brk&&!utenBryder()?`Spånbryder: ${S.brk}`:'',S.kval?`Kvalitet: ${S.kval}`:'',
     `Spånform: ${R.spaanform.find(x=>x.id===S.spaan).navn}`,`Bearbejdning: ${S.bearb}`,
     S.r?`r = ${S.r} mm`:'',S.f?`f = ${S.f} mm/omdr.`:'',S.ap?`ap = ${S.ap} mm`:'',S.vc?`vc = ${S.vc} m/min`:''].filter(Boolean).join('\n');
   app.innerHTML=`<h2>Anbefaling</h2>
   <div class="card"><span class="badge" style="background:${g.farve}">${g.id}</span><b>ISO ${S.sub}</b> – ${g.sub.find(s=>s.id===S.sub).navn}<br>
   <span class="mut">Kvalitetsområde: ISO ${g.id} (vælg kvalitet i fabrikantens selektor)</span></div>
-  <div class="card"><b>Spånbryder/geometri</b><br>${brk}<br><span class="mut">Plattetype: ${shapes}</span></div>
+  <div class="card"><b>Spånbryder/geometri</b><br>${utenBryder()?'Ingen spånbryder (type A). Spånkontrol sker via ap/f og evt. kølemiddel.':brk}<br><span class="mut">Plattetype: ${shapes}</span></div>
   <div class="card"><b>Materialenote ${g.id}</b><br>${R.materialeNoter[g.id]}</div>
   ${checks}
   <h3>Søg hos fabrikant</h3>
-  <div class="card"><b>Model</b><div class="code">${modelKode()||'alle typer'}</div><div class="row"><div><label>Spånbryder (valgfri)</label><input id="brk" placeholder="fx PM" value="${S.brk||''}"></div><div><label>Kvalitet (valgfri)</label><input id="kval" placeholder="fx 4325" value="${S.kval||''}"></div></div><p class="mut">Spånbryder og kvalitet hedder forskelligt hos hver fabrikant. Skriv dem selv ind.</p></div>
+  <div class="card"><b>Model</b><div class="code">${modelKode()||'alle typer'}</div><div class="row">${utenBryder()?'':`<div><label>Spånbryder (valgfri)</label><input id="brk" placeholder="fx PM" value="${S.brk||''}"></div>`}<div><label>Kvalitet (valgfri)</label><input id="kval" placeholder="fx 4325" value="${S.kval||''}"></div></div><p class="mut">Spånbryder og kvalitet hedder forskelligt hos hver fabrikant. Skriv dem selv ind.</p></div>
   ${m.map(x=>`<div class="card"><b>${x.navn}</b><br><span class="mut">${x.tip}${x.verificeret?'':' (ikke verificeret)'}</span><br><br><a class="btn primary" target="_blank" rel="noopener" href="${soeg(x)}">🔎 Søg ${modelKode()||'platter'} hos ${x.navn} ↗</a><a class="btn" style="margin-top:.5rem" target="_blank" rel="noopener" href="${x.url}">Åbn forsiden ↗</a>${(x.extra||[]).map(e=>`<a class="btn" style="margin-top:.5rem" target="_blank" rel="noopener" href="${e.url}">${e.label} ↗ <span class="mut">(ikke testet)</span></a>`).join('')}</div>`).join('')}
   <div class="card"><b>Resumé (til indtastning)</b><pre style="white-space:pre-wrap;margin:.4rem 0">${resume}</pre><button id="cp">📋 Kopiér resumé</button></div>
   ${nav(true,null)}<div class="nav"><button data-act="edit">✏️ Ret valg</button><button data-act="reset">↺ Start forfra</button></div>`;
-  for(const id of ['brk','kval'])$('#'+id).onchange=e=>{S[id]=e.target.value.trim();save();render()};
+  for(const id of ['brk','kval']){const el=$('#'+id);if(el)el.onchange=e=>{S[id]=e.target.value.trim();save();render()}}
   $('#cp').onclick=()=>{navigator.clipboard?.writeText(resume);$('#cp').textContent='✅ Kopieret'};
   bindNav();
 }

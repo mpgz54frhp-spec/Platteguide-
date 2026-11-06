@@ -16,13 +16,7 @@
    "url": "https://cuttingtools.ceratizit.com/dk/da.html",
    "verificeret": true,
    "tip": "Brug produktsøgning eller 'Tool Finder' hvis tilgængelig.",
-   "extra": [
-    {
-     "label": "E-katalog (engelsk)",
-     "url": "https://cuttingtools.ceratizit.com/gb/en/services/catalogue.html",
-     "testet": false
-    }
-   ],
+   "extra": [],
    "dom": "cuttingtools.ceratizit.com"
   },
   {
@@ -32,7 +26,8 @@
    "verificeret": true,
    "tip": "Brug 'Find produkt'/CoroPlus-værktøjer på siden.",
    "extra": [],
-   "dom": "sandvik.coromant.com"
+   "dom": "sandvik.coromant.com",
+   "soegUrl": "https://www.sandvik.coromant.com/da-dk/search?q={q}"
   },
   {
    "id": "kennametal",
@@ -50,5 +45,6 @@
    "dom": "kennametal.com"
   }
  ],
- "_note2": "'dom' bruges til en Google-søgning begrænset til fabrikantens site. Fabrikanternes egne søge-URL'er er ikke fundet/testet."
+ "_note2": "'dom' bruges til en Google-søgning begrænset til fabrikantens site. Fabrikanternes egne søge-URL'er er ikke fundet/testet.",
+ "_note3": "Sandvik soegUrl er testet i browser: søgning på fx WNMG 08 04 12-PR 4425 åbner produktsiden."
 }

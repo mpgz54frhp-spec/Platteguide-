@@ -4,7 +4,7 @@ const $=s=>document.querySelector(s), app=$('#app');
 const STEPS=['Operation','Materiale','Plattetype','Spånform','Data','Resultat'];
 
 async function load(){
-  for(const n of ['materials','operations','insert-shapes','manufacturers','rules']){
+  for(const n of ['materials','operations','insert-shapes','manufacturers','rules','grades','palbit']){
     D[n]=await (await fetch(`data/${n}.json`)).json();
   }
   try{Object.assign(S,JSON.parse(localStorage.getItem('pg')||'{}'))}catch(e){}
@@ -95,7 +95,33 @@ function r4(){
   for(const id of ['r','f','ap','vc'])$('#'+id).oninput=e=>{S[id]=e.target.value;save()};
   bindNav();
 }
-function soeg(x){const q=['site:'+x.dom,modelKomplet()?modelKode():(S.shapes.join(' OR ')||'indexable turning inserts'),utenBryder()?'':S.brk,S.kval].filter(Boolean).join(' ');return 'https://www.google.com/search?q='+encodeURIComponent(q)}
+const sandvikKode=(br,kv)=>{const m=S.mdl||{},b=baseKode();return b?`${b} ${m.ic} ${m.tyk} ${m.rad}${br?'-'+br:''}${kv?' '+kv:''}`:''};
+function soeg(x){
+  if(x.soegUrl){const q=modelKomplet()?sandvikKode(utenBryder()?'':S.brk,S.kval):(S.shapes[0]||'')+(S.kval?' '+S.kval:'');if(q)return x.soegUrl.replace('{q}',encodeURIComponent(q))}
+const q=['site:'+x.dom,modelKomplet()?modelKode():(S.shapes.join(' OR ')||'indexable turning inserts'),utenBryder()?'':S.brk,S.kval].filter(Boolean).join(' ');return 'https://www.google.com/search?q='+encodeURIComponent(q)}
+function subOk(f){return !f.sub||f.sub.includes(S.sub)}
+function sandvikForslag(){
+  const G=D.grades.sandvik[S.mat]; if(!G)return `<p class="mut">Ingen Sandvik-forslag lagt ind for ISO ${S.mat} endnu.</p>`;
+  const lst=G.forslag.filter(f=>f.bearb.includes(S.bearb)&&subOk(f)).sort((a,b)=>a.rang-b.rang);
+  if(!lst.length)return `<p class="mut">Ingen Sandvik-forslag til ${S.bearb} i ${S.sub}.</p>`;
+  const sb=D.grades.sandvik.spaanbryder, br=!utenBryder()&&S.mat==='P'?sb.P[S.bearb]:'';
+  const url=q=>D.manufacturers.makers.find(x=>x.id==='sandvik').soegUrl.replace('{q}',encodeURIComponent(q));
+  return `<div class="mut" style="margin:.4rem 0"><b>Forslag til kvalitet</b> (fra Sandvik)</div>`+lst.map(f=>{
+    const brk=utenBryder()?'':(S.brk||br); const kode=modelKomplet()?sandvikKode(brk,f.kval):'';
+    return `<div class="card" style="margin:.4rem 0"><b>${f.navn}</b>${f.rang===1?' ⭐':''}${kode?`<div class="code" style="font-size:1.05rem">${kode.replace(/ (\d\d) (\d\d) (\d\d)/,' $1 $2 $3')}</div>`:''}<span class="mut">${f.note}</span>${kode&&!brk?'<br><span class="mut">Spånbryder er ikke valgt. Vælg den i Sandviks resultater, eller skriv den i feltet ovenfor.</span>':''}<div style="margin-top:.5rem;display:flex;gap:.5rem;flex-wrap:wrap">${kode?`<a class="btn primary" style="flex:1" target="_blank" rel="noopener" href="${url(kode)}">🔎 ${brk?'Åbn':'Søg'} ${kode}</a>`:`<a class="btn" style="flex:1" target="_blank" rel="noopener" href="${url('GRADE:"'+f.kval+'"')}">🔎 Alle plader i ${f.navn}</a>`}<button data-use="${f.kval}" style="flex:0 0 auto">Brug som valg</button></div></div>`}).join('')
+    +`<p class="mut">Kilde: <a style="color:var(--acc)" target="_blank" rel="noopener" href="${G.kilde}">Sandvik, drejekvaliteter</a>.${br?` Spånbryder ${br} er <b>ikke bekræftet</b> (${sb.note})`:''}</p>`;
+}
+function palbitForslag(){
+  const P=D.palbit, mk=modelKomplet()?modelKode():'', items=mk&&P.models[mk];
+  if(!mk)return `<p class="mut">Vælg en komplet model for at se Palbits sortiment.</p>`;
+  if(!items)return `<p class="mut">${mk} findes ikke i Palbits katalog over drejeplatter (negative/positive, ekstern drejning).</p>`;
+  const byB={}; let n=0;
+  for(const [b,g,a] of items){const iso=P.iso[b+'|'+g]; if(iso&&!iso.includes(S.mat))continue; (byB[b||'(ingen)']??=[]).push([b,g,a]); n++}
+  if(!n)return `<p class="mut">${mk} findes hos Palbit, men ingen spånbryder/kvalitet er klassificeret til ISO ${S.mat}.</p>`;
+  const link=(b,g,a)=>P.base+P.folder[mk.slice(0,2)]+'/insert-'+mk.slice(0,4).toLowerCase()+'-'+mk.slice(4)+'-'+(b?b.toLowerCase()+'-':'')+g.toLowerCase()+'-'+a.toLowerCase();
+  return `<div class="mut" style="margin:.4rem 0"><b>Palbits sortiment til ISO ${S.mat}</b> – ${n} varer</div>`+Object.entries(byB).filter(([b])=>!utenBryder()||b==='(ingen)').map(([b,l])=>`<div class="card" style="margin:.4rem 0"><b>${mk.slice(0,4)} ${mk.slice(4)}${b==='(ingen)'?'':'-'+b}</b><div style="margin-top:.4rem;display:flex;gap:.4rem;flex-wrap:wrap">${l.map(([bb,g,a])=>`<a class="btn" style="padding:.4rem .6rem" target="_blank" rel="noopener" href="${link(bb,g,a)}">${g} ↗</a>`).join('')}</div><button data-use="${l[0][1]}" data-brk="${b==='(ingen)'?'':b}" style="margin-top:.4rem">Brug ${b==='(ingen)'?'':b+' '}som valg</button></div>`).join('')
+    +`<p class="mut">Kilde: palbit.pt (produktdata). ISO-gruppen er Palbits egen klassificering. Hvilken spånbryder der passer til slut/medium/skrub står ikke på siden – se Palbits katalog.</p>`;
+}
 const num=v=>parseFloat(String(v).replace(',','.'));
 function r5(){
   const g=grp(), R=D.rules, m=D.manufacturers.makers;
@@ -123,9 +149,10 @@ function r5(){
   ${checks}
   <h3>Søg hos fabrikant</h3>
   <div class="card"><b>Model</b><div class="code">${modelKode()||'alle typer'}</div><div class="row">${utenBryder()?'':`<div><label>Spånbryder (valgfri)</label><input id="brk" placeholder="fx PM" value="${S.brk||''}"></div>`}<div><label>Kvalitet (valgfri)</label><input id="kval" placeholder="fx 4325" value="${S.kval||''}"></div></div><p class="mut">Spånbryder og kvalitet hedder forskelligt hos hver fabrikant. Skriv dem selv ind.</p></div>
-  ${m.map(x=>`<div class="card"><b>${x.navn}</b><br><span class="mut">${x.tip}${x.verificeret?'':' (ikke verificeret)'}</span><br><br><a class="btn primary" target="_blank" rel="noopener" href="${soeg(x)}">🔎 Søg ${modelKode()||'platter'} hos ${x.navn} ↗</a><a class="btn" style="margin-top:.5rem" target="_blank" rel="noopener" href="${x.url}">Åbn forsiden ↗</a>${(x.extra||[]).map(e=>`<a class="btn" style="margin-top:.5rem" target="_blank" rel="noopener" href="${e.url}">${e.label} ↗ <span class="mut">(ikke testet)</span></a>`).join('')}</div>`).join('')}
+  ${m.map(x=>`<div class="card"><b>${x.navn}</b><br><span class="mut">${x.tip}${x.verificeret?'':' (ikke verificeret)'}</span><br><br><a class="btn primary" target="_blank" rel="noopener" href="${soeg(x)}">🔎 Søg ${modelKode()||'platter'} hos ${x.navn} ↗</a><a class="btn" style="margin-top:.5rem" target="_blank" rel="noopener" href="${x.url}">Åbn forsiden ↗</a>${x.id==='sandvik'?sandvikForslag():x.id==='palbit'?palbitForslag():''}${(x.extra||[]).map(e=>`<a class="btn" style="margin-top:.5rem" target="_blank" rel="noopener" href="${e.url}">${e.label} ↗ <span class="mut">(ikke testet)</span></a>`).join('')}</div>`).join('')}
   <div class="card"><b>Resumé (til indtastning)</b><pre style="white-space:pre-wrap;margin:.4rem 0">${resume}</pre><button id="cp">📋 Kopiér resumé</button></div>
   ${nav(true,null)}<div class="nav"><button data-act="edit">✏️ Ret valg</button><button data-act="reset">↺ Start forfra</button></div>`;
+  app.querySelectorAll('[data-use]').forEach(b=>b.onclick=()=>{S.kval=b.dataset.use;if(b.dataset.brk!==undefined)S.brk=b.dataset.brk;save();render();scrollTo(0,0)});
   for(const id of ['brk','kval']){const el=$('#'+id);if(el)el.onchange=e=>{S[id]=e.target.value.trim();save();render()}}
   $('#cp').onclick=()=>{navigator.clipboard?.writeText(resume);$('#cp').textContent='✅ Kopieret'};
   bindNav();

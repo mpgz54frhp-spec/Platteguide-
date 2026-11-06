@@ -7,7 +7,8 @@
    "url": "https://www.palbit.pt/en/home",
    "verificeret": true,
    "tip": "Brug katalog/produktsøgning på siden.",
-   "extra": []
+   "extra": [],
+   "dom": "palbit.pt"
   },
   {
    "id": "ceratizit",
@@ -21,7 +22,8 @@
      "url": "https://cuttingtools.ceratizit.com/gb/en/services/catalogue.html",
      "testet": false
     }
-   ]
+   ],
+   "dom": "cuttingtools.ceratizit.com"
   },
   {
    "id": "sandvik",
@@ -29,7 +31,8 @@
    "url": "https://www.sandvik.coromant.com/da-dk",
    "verificeret": true,
    "tip": "Brug 'Find produkt'/CoroPlus-værktøjer på siden.",
-   "extra": []
+   "extra": [],
+   "dom": "sandvik.coromant.com"
   },
   {
    "id": "kennametal",
@@ -43,7 +46,9 @@
      "url": "https://www.kennametal.com/us/en/resources/novo/select.html",
      "testet": false
     }
-   ]
+   ],
+   "dom": "kennametal.com"
   }
- ]
+ ],
+ "_note2": "'dom' bruges til en Google-søgning begrænset til fabrikantens site. Fabrikanternes egne søge-URL'er er ikke fundet/testet."
 }

@@ -1,5 +1,5 @@
 'use strict';
-const D={}, S={step:0,op:null,mat:null,sub:null,shapes:[],spaan:null,bearb:null,r:'',ap:'',f:'',vc:'',kode:{}};
+const D={}, S={step:0,op:null,mat:null,sub:null,shapes:[],spaan:null,bearb:null,r:'',ap:'',f:'',vc:'',mdl:{ic:'',tyk:'',rad:''},brk:'',kval:''};
 const $=s=>document.querySelector(s), app=$('#app');
 const STEPS=['Operation','Materiale','Plattetype','Spånform','Data','Resultat'];
 
@@ -7,7 +7,9 @@ async function load(){
   for(const n of ['materials','operations','insert-shapes','manufacturers','rules']){
     D[n]=await (await fetch(`data/${n}.json`)).json();
   }
-  try{Object.assign(S,JSON.parse(localStorage.getItem('pg')||'{}'),{step:0})}catch(e){}
+  try{Object.assign(S,JSON.parse(localStorage.getItem('pg')||'{}'))}catch(e){}
+  S.mdl=S.mdl||{ic:'',tyk:'',rad:''};
+  S.step=(S.op&&S.sub&&S.spaan&&S.bearb)?5:0;
   if('serviceWorker' in navigator)navigator.serviceWorker.register('service-worker.js').catch(()=>{});
   render();
 }
@@ -40,35 +42,36 @@ function r1(){
   app.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{S.sub=b.dataset.s;save();render()});
   bindNav();
 }
+function baseKode(){return S.shapes.length===1&&/^[A-Z]{4}$/.test(S.shapes[0])?S.shapes[0]:null}
+function modelKode(){
+  const b=baseKode(); if(!b)return S.shapes.length?S.shapes.join(', '):'';
+  const m=S.mdl||{}; return b+(m.ic||'__')+(m.tyk||'__')+(m.rad||'__');
+}
+const modelKomplet=()=>{const b=baseKode(),m=S.mdl||{};return !!(b&&m.ic&&m.tyk&&m.rad)};
 function r2(){
-  const L=shapesList(), isT=op()?.drejning, I=D['insert-shapes'].iso1832;
-  app.innerHTML=`<h2>Plattetype</h2><p class="mut">Vælg én eller flere. Vælg ingen = alle typer.</p>
+  const L=shapesList(), I=D['insert-shapes'].iso1832;
+  app.innerHTML=`<h2>Plattetype</h2><p class="mut">Vælg én type for at vælge præcis model. Vælger du ingen, gælder alle typer.</p>
   <div class="grid">${L.map(s=>`<button data-sh="${s.kode}" class="${S.shapes.includes(s.kode)?'sel':''}"><b>${s.kode}</b><br><span class="mut">${s.info}</span></button>`).join('')}</div>
-  ${isT?kodeBygger(I):''}${nav(true,true)}`;
+  ${op()?.drejning?modelBygger(I):''}${nav(true,true)}`;
   app.querySelectorAll('[data-sh]').forEach(b=>b.onclick=()=>{
-    const k=b.dataset.sh;S.shapes=S.shapes.includes(k)?S.shapes.filter(x=>x!==k):[...S.shapes,k];save();render()});
-  if(isT){
-    app.querySelectorAll('[data-k]').forEach(el=>el.onchange=()=>{S.kode[el.dataset.k]=el.value;
-      if(el.dataset.k==='rad'){const v=I.radius[el.value];if(v!==undefined)S.r=String(v)}
-      save();render()});
-  }
+    const k=b.dataset.sh;S.shapes=S.shapes.includes(k)?S.shapes.filter(x=>x!==k):[...S.shapes,k];S.mdl={ic:'',tyk:'',rad:''};save();render()});
+  app.querySelectorAll('[data-k]').forEach(el=>el.onchange=()=>{S.mdl[el.dataset.k]=el.value;
+    if(el.dataset.k==='rad'){const v=I.radius[el.value];if(v!==undefined)S.r=String(v)}
+    save();render()});
   bindNav();
 }
 function opts(obj,sel,fmt){return `<option value="">–</option>`+Object.entries(obj).map(([k,v])=>`<option value="${k}" ${sel===k?'selected':''}>${fmt?fmt(k,v):k+' – '+v}</option>`).join('')}
-function kodeBygger(I){
-  const k=S.kode, code=bygKode();
-  return `<div class="card"><h3>ISO 1832-kodebygger</h3>
-  <div class="code">${code}</div><p class="mut">Rækkefølge: form · frivinkel · tolerance · type · størrelse (IC) · tykkelse · næseradius</p>
-  <div class="row"><div><label>Form</label><select data-k="form">${opts(I.form,k.form)}</select></div>
-  <div><label>Frivinkel</label><select data-k="friv">${opts(I.frivinkel,k.friv)}</select></div></div>
-  <div class="row"><div><label>Tolerance</label><select data-k="tol">${opts(I.tolerance,k.tol,(a,b)=>a+' – '+b.slice(0,24))}</select></div>
-  <div><label>Type/hul/spånbryder</label><select data-k="type">${opts(I.type,k.type)}</select></div></div>
-  <div class="row"><div><label>Størrelse (IC)</label><select data-k="ic">${opts(I.ic,k.ic,(a,b)=>a+' – '+b+' mm')}</select></div>
-  <div><label>Tykkelse</label><select data-k="tyk">${opts(I.tykkelse,k.tyk,(a,b)=>a+' – '+b+' mm')}</select></div></div>
-  <label>Næseradius</label><select data-k="rad">${opts(I.radius,k.rad,(a,b)=>a+' – r '+b+' mm')}</select>
-  <p class="mut">Obs: for trekanter (T) angiver størrelsen skærelængden, ikke IC. Tjek mod katalog.</p></div>`;
+function modelBygger(I){
+  const b=baseKode(); if(!b)return `<p class="mut">Vælg præcis én plattetype (fx WNMG) for at vælge størrelse, tykkelse og radius.</p>`;
+  const st=D['insert-shapes'].storrelser[b[0]]; const m=S.mdl;
+  if(!st)return `<p class="mut">Ingen størrelsestabel for form ${b[0]} endnu.</p>`;
+  return `<div class="card"><h3>Vælg model</h3><div class="code">${modelKode()}</div>
+  <p class="mut">${b}: ${I.form[b[0]]||''}, frivinkel ${I.frivinkel[b[1]]||b[1]}, type ${b[3]}. Resten vælger du her.</p>
+  <label>Størrelse</label><select data-k="ic">${opts(st,m.ic,(k,v)=>k+' – IC '+v.ic+' mm'+(v.std?' ★':''))}</select>
+  <div class="row"><div><label>Tykkelse</label><select data-k="tyk">${opts(I.tykkelse,m.tyk,(k,v)=>k+' – '+v+' mm')}</select></div>
+  <div><label>Næseradius</label><select data-k="rad">${opts(I.radius,m.rad,(k,v)=>k+' – r '+v+' mm')}</select></div></div>
+  <p class="mut">★ = IC 12,7. Størrelseskoder er vejledende (ISO 1832). Tjek mod katalog.</p></div>`;
 }
-function bygKode(){const k=S.kode;return [k.form||'_',k.friv||'_',k.tol||'_',k.type||'_',k.ic||'__',k.tyk||'__',k.rad||'__'].join('')}
 function r3(){
   const R=D.rules;
   app.innerHTML=`<h2>Spånform & bearbejdning</h2>
@@ -89,6 +92,7 @@ function r4(){
   for(const id of ['r','f','ap','vc'])$('#'+id).oninput=e=>{S[id]=e.target.value;save()};
   bindNav();
 }
+function soeg(x){const q=['site:'+x.dom,modelKomplet()?modelKode():(S.shapes.join(' OR ')||'indexable turning inserts'),S.brk,S.kval].filter(Boolean).join(' ');return 'https://www.google.com/search?q='+encodeURIComponent(q)}
 const num=v=>parseFloat(String(v).replace(',','.'));
 function r5(){
   const g=grp(), R=D.rules, m=D.manufacturers.makers;
@@ -103,10 +107,9 @@ function r5(){
   }
   if(r>0&&ap>0&&ap<r&&S.bearb!=='slut') checks+=`<div class="card warn">⚠️ ap (${ap}) er mindre end r (${r}). Det giver ofte tryk/vibration i skær. Tjek mod katalog.</div>`;
   const shapes=S.shapes.length?S.shapes.join(', '):'alle typer';
-  const kode=bygKode();
-  const resume=[
+    const resume=[
     `Operation: ${op().navn}`,`Materiale: ${S.sub} ${g.sub.find(s=>s.id===S.sub).navn}`,
-    `Plattetype: ${shapes}${/_/.test(kode)?'':' ('+kode+')'}`,
+    `Plattetype: ${shapes}${modelKomplet()?' ('+modelKode()+')':''}`,S.brk?`Spånbryder: ${S.brk}`:'',S.kval?`Kvalitet: ${S.kval}`:'',
     `Spånform: ${R.spaanform.find(x=>x.id===S.spaan).navn}`,`Bearbejdning: ${S.bearb}`,
     S.r?`r = ${S.r} mm`:'',S.f?`f = ${S.f} mm/omdr.`:'',S.ap?`ap = ${S.ap} mm`:'',S.vc?`vc = ${S.vc} m/min`:''].filter(Boolean).join('\n');
   app.innerHTML=`<h2>Anbefaling</h2>
@@ -115,10 +118,12 @@ function r5(){
   <div class="card"><b>Spånbryder/geometri</b><br>${brk}<br><span class="mut">Plattetype: ${shapes}</span></div>
   <div class="card"><b>Materialenote ${g.id}</b><br>${R.materialeNoter[g.id]}</div>
   ${checks}
-  <h3>Gå videre til fabrikant</h3>
-  ${m.map(x=>`<div class="card"><b>${x.navn}</b><br><span class="mut">${x.tip}${x.verificeret?'':' (ikke verificeret)'}</span><br><br><a class="btn primary" target="_blank" rel="noopener" href="${x.url}">Åbn ${x.navn} ↗</a>${(x.extra||[]).map(e=>`<a class="btn" style="margin-top:.5rem" target="_blank" rel="noopener" href="${e.url}">${e.label} ↗ <span class="mut">(ikke testet)</span></a>`).join('')}</div>`).join('')}
+  <h3>Søg hos fabrikant</h3>
+  <div class="card"><b>Model</b><div class="code">${modelKode()||'alle typer'}</div><div class="row"><div><label>Spånbryder (valgfri)</label><input id="brk" placeholder="fx PM" value="${S.brk||''}"></div><div><label>Kvalitet (valgfri)</label><input id="kval" placeholder="fx 4325" value="${S.kval||''}"></div></div><p class="mut">Spånbryder og kvalitet hedder forskelligt hos hver fabrikant. Skriv dem selv ind.</p></div>
+  ${m.map(x=>`<div class="card"><b>${x.navn}</b><br><span class="mut">${x.tip}${x.verificeret?'':' (ikke verificeret)'}</span><br><br><a class="btn primary" target="_blank" rel="noopener" href="${soeg(x)}">🔎 Søg ${modelKode()||'platter'} hos ${x.navn} ↗</a><a class="btn" style="margin-top:.5rem" target="_blank" rel="noopener" href="${x.url}">Åbn forsiden ↗</a>${(x.extra||[]).map(e=>`<a class="btn" style="margin-top:.5rem" target="_blank" rel="noopener" href="${e.url}">${e.label} ↗ <span class="mut">(ikke testet)</span></a>`).join('')}</div>`).join('')}
   <div class="card"><b>Resumé (til indtastning)</b><pre style="white-space:pre-wrap;margin:.4rem 0">${resume}</pre><button id="cp">📋 Kopiér resumé</button></div>
-  ${nav(true,null)}<div class="nav"><button data-act="reset">↺ Start forfra</button></div>`;
+  ${nav(true,null)}<div class="nav"><button data-act="edit">✏️ Ret valg</button><button data-act="reset">↺ Start forfra</button></div>`;
+  for(const id of ['brk','kval'])$('#'+id).onchange=e=>{S[id]=e.target.value.trim();save();render()};
   $('#cp').onclick=()=>{navigator.clipboard?.writeText(resume);$('#cp').textContent='✅ Kopieret'};
   bindNav();
 }
@@ -126,7 +131,8 @@ function bindNav(){
   app.querySelectorAll('[data-act]').forEach(b=>b.onclick=()=>{
     const a=b.dataset.act;
     if(a==='prev')go(S.step-1);else if(a==='next')go(S.step+1);
-    else if(a==='reset'){localStorage.removeItem('pg');Object.assign(S,{step:0,op:null,mat:null,sub:null,shapes:[],spaan:null,bearb:null,r:'',ap:'',f:'',vc:'',kode:{}});render()}
+    else if(a==='edit')go(0);
+    else if(a==='reset'){localStorage.removeItem('pg');Object.assign(S,{step:0,op:null,mat:null,sub:null,shapes:[],spaan:null,bearb:null,r:'',ap:'',f:'',vc:'',mdl:{ic:'',tyk:'',rad:''},brk:'',kval:''});render()}
   });
 }
 load();

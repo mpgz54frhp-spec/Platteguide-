@@ -147,5 +147,134 @@
     "info": "Platteform er producentspecifik – vælges i producentens selektor."
    }
   ]
+ },
+ "storrelser": {
+  "_note": "Vejledende, ud fra gængs katalogpraksis og ISO 1832 – ikke fuldt verificeret mod standarden. Tjek altid mod katalog. IC = indskreven cirkel.",
+  "C": {
+   "06": {
+    "ic": "6,35",
+    "std": false
+   },
+   "09": {
+    "ic": "9,525",
+    "std": false
+   },
+   "12": {
+    "ic": "12,7",
+    "std": true
+   },
+   "16": {
+    "ic": "15,875",
+    "std": false
+   },
+   "19": {
+    "ic": "19,05",
+    "std": false
+   },
+   "25": {
+    "ic": "25,4",
+    "std": false
+   }
+  },
+  "D": {
+   "07": {
+    "ic": "6,35",
+    "std": false
+   },
+   "11": {
+    "ic": "9,525",
+    "std": false
+   },
+   "15": {
+    "ic": "12,7",
+    "std": true
+   }
+  },
+  "W": {
+   "04": {
+    "ic": "6,35",
+    "std": false
+   },
+   "06": {
+    "ic": "9,525",
+    "std": false
+   },
+   "08": {
+    "ic": "12,7",
+    "std": true
+   }
+  },
+  "T": {
+   "11": {
+    "ic": "6,35",
+    "std": false
+   },
+   "16": {
+    "ic": "9,525",
+    "std": false
+   },
+   "22": {
+    "ic": "12,7",
+    "std": true
+   },
+   "27": {
+    "ic": "15,875",
+    "std": false
+   }
+  },
+  "S": {
+   "09": {
+    "ic": "9,525",
+    "std": false
+   },
+   "12": {
+    "ic": "12,7",
+    "std": true
+   },
+   "15": {
+    "ic": "15,875",
+    "std": false
+   },
+   "19": {
+    "ic": "19,05",
+    "std": false
+   },
+   "25": {
+    "ic": "25,4",
+    "std": false
+   }
+  },
+  "V": {
+   "11": {
+    "ic": "6,35",
+    "std": false
+   },
+   "16": {
+    "ic": "9,525",
+    "std": false
+   }
+  },
+  "R": {
+   "06": {
+    "ic": "6",
+    "std": false
+   },
+   "08": {
+    "ic": "8",
+    "std": false
+   },
+   "10": {
+    "ic": "10",
+    "std": false
+   },
+   "12": {
+    "ic": "12",
+    "std": false
+   },
+   "16": {
+    "ic": "16",
+    "std": false
+   }
+  }
  }
 }

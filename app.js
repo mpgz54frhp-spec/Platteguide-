@@ -101,14 +101,20 @@ function soeg(x){
 const q=['site:'+x.dom,modelKomplet()?modelKode():(S.shapes.join(' OR ')||'indexable turning inserts'),utenBryder()?'':S.brk,S.kval].filter(Boolean).join(' ');return 'https://www.google.com/search?q='+encodeURIComponent(q)}
 function subOk(f){return !f.sub||f.sub.includes(S.sub)}
 const svUrl=q=>D.manufacturers.makers.find(x=>x.id==='sandvik').soegUrl.replace('{q}',encodeURIComponent(q));
-function sandvikList(){return ((D.start.sandvik.forslag[S.mat]||{})[S.bearb]||[]).filter(f=>!f.sub||f.sub.includes(S.sub))}
+function sandvikList(){
+  const F=D.start.sandvik.forslag, own=((F[S.mat]||{})[S.bearb]||[]).filter(f=>!f.sub||f.sub.includes(S.sub));
+  const ov=(D.start.overlap||{})[S.mat]||[], extra=[];
+  for(const g of ov)for(const f of ((F[g]||{})[S.bearb]||[])){
+    if(own.some(o=>o.brk===f.brk&&o.kval===f.kval)||extra.some(o=>o.brk===f.brk&&o.kval===f.kval))continue;
+    extra.push({...f,rolle:'alt',fra:g,note:'Stålplade, kan også bruges i støbejern. '+f.note})}
+  return own.concat(extra)}
 function sandvikForslag(){
   const lst=sandvikList(); if(!lst.length)return `<p class="mut">Ingen Sandvik-forslag lagt ind for ISO ${S.mat} / ${S.bearb}.</p>`;
   const st=D.start.sandvik;
   return `<div class="mut" style="margin:.4rem 0"><b>Startforslag fra Sandvik</b></div>`+lst.map(f=>{
     const brk=utenBryder()?'':(f.brk||''); const gk=S.mat==='N'||S.mat==='H'; const kode=modelKomplet()&&!gk?sandvikKode(brk,f.kval):'';
     const navn=(f.brk&&!utenBryder()?f.brk+' ':'')+(/^\d/.test(f.kval)?'GC'+f.kval:f.kval);
-    return `<div class="card" style="margin:.4rem 0"><b>${navn}</b>${f.rolle==='foerst'?' ⭐ førstevalg':' · alternativ'}${kode?`<div class="code" style="font-size:1.05rem">${kode}</div>`:''}<span class="mut">${f.note}</span><div style="margin-top:.5rem;display:flex;gap:.5rem;flex-wrap:wrap">${kode?`<a class="btn primary" style="flex:1" target="_blank" rel="noopener" href="${svUrl(kode)}">🔎 ${utenBryder()?'Søg':'Åbn'} ${kode}</a>`:`<a class="btn primary" style="flex:1" target="_blank" rel="noopener" href="${svUrl('GRADE:"'+f.kval.replace(/^GC/,'')+'"')}">🔎 Alle plader i ${navn}</a>`}<button data-use="${f.kval}" data-brk="${brk}" style="flex:0 0 auto">Brug som valg</button></div></div>`}).join('')
+    return `<div class="card" style="margin:.4rem 0"><b>${navn}</b>${f.rolle==='foerst'?' ⭐ førstevalg':' · alternativ'}${f.fra?` <span class="badge" style="background:#2f6fdb">fra stål</span>`:''}${kode?`<div class="code" style="font-size:1.05rem">${kode}</div>`:''}<span class="mut">${f.note}</span><div style="margin-top:.5rem;display:flex;gap:.5rem;flex-wrap:wrap">${kode?`<a class="btn primary" style="flex:1" target="_blank" rel="noopener" href="${svUrl(kode)}">🔎 ${utenBryder()?'Søg':'Åbn'} ${kode}</a>`:`<a class="btn primary" style="flex:1" target="_blank" rel="noopener" href="${svUrl('GRADE:"'+f.kval.replace(/^GC/,'')+'"')}">🔎 Alle plader i ${navn}</a>`}<button data-use="${f.kval}" data-brk="${brk}" style="flex:0 0 auto">Brug som valg</button></div></div>`}).join('')
     +`<p class="mut">Spånbryderens anvendelse (PF/MF = slut, PM/MM/KM/SM = medium, PR/MR/KR = skrub) stammer fra Sandviks eget katalog. ${st.verificeret} <a style="color:var(--acc)" target="_blank" rel="noopener" href="${st.kilde_grades}">Kvaliteter: Sandvik</a>. Tjek altid dit eget katalog.</p>`;
 }
 function startKort(){
@@ -146,6 +152,13 @@ function palbitForslag(){
     h+=recB.length?recB.map(b=>chip(b,byB[b])).join('')+`<p class="mut">${rec.note}${rec.kval?` Anbefalede kvaliteter (fremhævet): ${rec.kval.join(', ')}.`:''}</p>`
        :`<p class="mut">Den foreslåede spånbryder (${rec.brk.join('/')}) findes ikke til ${mk} i Palbits katalog.</p>`;
   } else h+=`<p class="mut">Ingen Palbit-anbefaling for ISO ${S.mat} / ${S.bearb} fundet.</p>`;
+  const ov=(D.start.overlap||{})[S.mat]||[];
+  for(const g of ov){
+    const pr=(D.start.palbit[g]||{})[S.bearb]; if(!pr)continue;
+    const byG={}; for(const [b,gr,a] of items){const iso=P.iso[b+'|'+gr]; if(!iso||!iso.includes(g)||!pr.brk.includes(b))continue;(byG[b]??=[]).push([b,gr,a])}
+    const ents=Object.entries(byG); if(!ents.length)continue;
+    h+=`<div class="mut" style="margin:.6rem 0 .2rem"><b>Stålplader (ISO ${g}) – kan også bruges i støbejern</b> <span class="badge" style="background:#2f6fdb">fra stål</span></div>`+ents.map(([b,l])=>chip(b,l)).join('')+`<p class="mut">Baseret på erfaring (stålplader fungerer også i støbejern), ikke på Palbits egen klassificering.</p>`;
+  }
   if(rest.length)h+=`<details><summary class="mut">Øvrige varer i sortimentet til ISO ${S.mat} (${rest.reduce((a,[,l])=>a+l.length,0)})</summary>${rest.map(([b,l])=>chip(b,l)).join('')}</details>`;
   return h+`<p class="mut">Kilde: palbit.pt (produktdata, ISO-gruppen er Palbits egen klassificering).</p>`;
 }

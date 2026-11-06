@@ -393,5 +393,11 @@
     "status": "kilde"
    }
   }
- }
+ },
+ "overlap": {
+  "K": [
+   "P"
+  ]
+ },
+ "_overlap_note": "Stålplader (P) må foreslås som alternativer i støbejern (K). Aldrig omvendt. Sandvik: PF/PM/PR er klassificeret KP/KMP i kataloget, og kvalitetssiden for støbejern nævner GC4415/4405/4425. Palbit: klassificerer stålplader kun som P, så overlappet er brugerens erfaring."
 }

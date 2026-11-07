@@ -21,3 +21,15 @@ input,select{width:100%;font:inherit;padding:.7rem;border-radius:8px;border:1px 
 .code{font:600 1.4rem ui-monospace,monospace;letter-spacing:.08rem;color:var(--acc)}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
 footer{position:fixed;bottom:0;left:0;right:0;background:#0d1117;color:var(--mut);font-size:.72rem;padding:.4rem .8rem;text-align:center}
+
+[id^=sec-]{scroll-margin-top:72px}
+.opimg{display:block;width:84px;height:84px;margin:0 auto .4rem}
+button.op{text-align:center}
+.bar{height:8px;border-radius:6px;background:linear-gradient(90deg,#c7503c,#e0b400,#3ecf8e);margin:.3rem 0 .1rem}
+.bar+.lbl{display:flex;justify-content:space-between;font-size:.75rem;color:var(--mut)}
+details.guide{margin:.6rem 0;background:#1a212b;border-radius:10px;padding:.4rem .8rem;border:1px solid #2b3441}
+details.guide summary{cursor:pointer;font-weight:600}
+.gr{display:flex;gap:.6rem;margin:.5rem 0;align-items:flex-start}
+.gr .n{flex:0 0 1.6rem;height:1.6rem;border-radius:50%;background:var(--acc);color:#111;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:.85rem}
+.gr.cur{outline:1px solid var(--acc);border-radius:8px;padding:.2rem}
+main{padding-bottom:55vh}

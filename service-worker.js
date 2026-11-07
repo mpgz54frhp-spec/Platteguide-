@@ -1,5 +1,5 @@
-const C='platteguide-v7';
-const F=['./','index.html','style.css','app.js','manifest.webmanifest','icons/icon.svg','data/materials.json','data/operations.json','data/insert-shapes.json','data/manufacturers.json','data/rules.json','data/grades.json','data/palbit.json','data/start.json'];
+const C='platteguide-v8';
+const F=['./','index.html','style.css','app.js','manifest.webmanifest','icons/icon.svg','data/materials.json','data/operations.json','data/insert-shapes.json','data/manufacturers.json','data/rules.json','data/grades.json','data/palbit.json','data/start.json','data/guide.json','icons/wnmg.svg','icons/endmill-head.svg','icons/drill.svg'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(F)));self.skipWaiting()});
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x)))).then(()=>self.clients.claim())));
 // Network-first: nye versioner hentes straks, cache bruges kun offline

@@ -1,0 +1,174 @@
+{
+ "_note": "Rækkefølgen går fra hård/slidstærk til sej/sikker. Udledt af fabrikantens egne beskrivelser. Vejledende, tjek altid kataloget.",
+ "sandvik": {
+  "P": {
+   "kilde": "https://www.sandvik.coromant.com/en-us/tools/inserts-grades/insert-grade-information/turning-inserts-grades/turning-inserts-grades-steel",
+   "regel": "Sandviks egen tommelfingerregel: højere skærehastighed giver mere plastisk deformation og kraterslid, så vælg den hårde. Æg-sikkerhed og modstand mod udbrud afhænger af, hvor stabile forholdene er, så vælg den sejere ved afbrudte snit eller ustabile forhold.",
+   "raekke": [
+    {
+     "kval": "4405",
+     "navn": "GC4405",
+     "txt": "Hårdest i rækken. Højtilspændings-skrub i stabile forhold, især stål over 300 HB. Meget modstand mod plastisk deformation."
+    },
+    {
+     "kval": "4415",
+     "navn": "GC4415",
+     "txt": "Hård. Mere varmebestandig. Kontinuerligt til let afbrudt snit i stabile forhold."
+    },
+    {
+     "kval": "4425",
+     "navn": "GC4425",
+     "txt": "Sejere substrat. Førstevalg til slut til skrub, kontinuerlige og afbrudte snit."
+    },
+    {
+     "kval": "4335",
+     "navn": "GC4335",
+     "txt": "Bygget til skrub i afbrudte snit og ugunstige forhold."
+    }
+   ]
+  },
+  "M": {
+   "kilde": "https://www.sandvik.coromant.com/en-us/tools/inserts-grades/insert-grade-information/turning-inserts-grades/turning-inserts-grades-stainless-steel",
+   "regel": "Rækkefølgen for rustfrit er mere vejledende: Sandvik angiver den ikke direkte som hård/sej.",
+   "raekke": [
+    {
+     "kval": "2220",
+     "navn": "GC2220",
+     "txt": "Mere slidstyrke end GC2025 ved semi-slut til skrub."
+    },
+    {
+     "kval": "2515",
+     "navn": "GC2515",
+     "txt": "Førstevalg til slut, slut til let skrub. Robust og præcis."
+    },
+    {
+     "kval": "2025",
+     "navn": "GC2025",
+     "txt": "Førstevalg fra semi-slut til skrub. God modstand mod termisk og mekanisk stød."
+    },
+    {
+     "kval": "2035",
+     "navn": "GC2035",
+     "txt": "PVD til semi-slut til skrub ved lav til moderat hastighed."
+    }
+   ]
+  },
+  "K": {
+   "kilde": "https://www.sandvik.coromant.com/en-us/tools/inserts-grades/insert-grade-information/turning-inserts-grades/turning-inserts-grades-cast-iron",
+   "regel": "Stålkvaliteterne (4405, 4415, 4425) er taget med, fordi Sandvik selv nævner dem som supplement i støbejern.",
+   "raekke": [
+    {
+     "kval": "3210",
+     "navn": "GC3210",
+     "txt": "Meget hårdt substrat. Høj fladeslidstyrke, gode til gennemsnitlige forhold, kontinuerlige og afbrudte snit."
+    },
+    {
+     "kval": "4405",
+     "navn": "GC4405",
+     "txt": "Hårdt substrat. Kontinuerlig slutdrejning i støbejern under stabile forhold."
+    },
+    {
+     "kval": "4415",
+     "navn": "GC4415",
+     "txt": "Relativt hårdt substrat. Semi-slut i gråt og nodulært jern under normale forhold."
+    },
+    {
+     "kval": "3225",
+     "navn": "GC3225",
+     "txt": "Høj æg-sikkerhed. Gennemsnitlige til svære forhold, let til kraftigt afbrudt snit."
+    },
+    {
+     "kval": "4425",
+     "navn": "GC4425",
+     "txt": "Sejere substrat. Dårlige forhold eller skrub i gråt og nodulært jern."
+    }
+   ]
+  },
+  "S": {
+   "kilde": "https://www.sandvik.coromant.com/en-us/tools/inserts-grades/insert-grade-information/turning-inserts-grades/turning-inserts-grades-for-titanium-hrsa",
+   "regel": "Til nikkelbaserede legeringer (S1). Til titan (S2) nævner Sandvik kun H13A.",
+   "raekke": [
+    {
+     "kval": "1205",
+     "navn": "GC1205",
+     "txt": "PVD. Hårdt substrat og belægning, tillader markant højere skærehastighed. Aldrede nikkelbaserede legeringer."
+    },
+    {
+     "kval": "1210",
+     "navn": "GC1210",
+     "txt": "PVD. Supplerer GC1205, når der kræves mere sejhed."
+    }
+   ]
+  },
+  "H": {
+   "kilde": "https://www.sandvik.coromant.com/en-us/tools/inserts-grades/insert-grade-information/turning-inserts-grades/turning-inserts-grades-hardened-steel",
+   "regel": "CBN-kvaliteter til indsats- og induktionshærdet stål. Valget afgøres af afbrydelser i snittet.",
+   "raekke": [
+    {
+     "kval": "CB7105",
+     "navn": "CB7105",
+     "txt": "Lav tilspænding, kontinuerlige snit, stabile forhold, højeste hastigheder."
+    },
+    {
+     "kval": "CB7115",
+     "navn": "CB7115",
+     "txt": "Høj tilspænding og/eller snitdybde, kontinuerlig til let afbrudt snit."
+    },
+    {
+     "kval": "CB7125",
+     "navn": "CB7125",
+     "txt": "Let til medium afbrudt snit (affasede kanter)."
+    },
+    {
+     "kval": "CB7135",
+     "navn": "CB7135",
+     "txt": "Kraftigt afbrudt snit (uaffasede kanter)."
+    }
+   ]
+  }
+ },
+ "palbit": {
+  "M": {
+   "kilde": "https://www.palbit.pt/uploads/Turning/Palbit-CHIPBREAKERS-FOR-STAINLESS-STEEL-HRSA-TURNING.pdf",
+   "regel": "Palbits PHH-familie er bygget på tre mikrokorn-substrater med forskellig balance mellem hårdhed og sejhed.",
+   "raekke": [
+    {
+     "kval": "PHH905",
+     "navn": "PHH905",
+     "txt": "Meget hårdt substrat (M01–M05, S01–S05). Optimeret til finish og finfinish i rustfrit og HRSA."
+    },
+    {
+     "kval": "PHH910",
+     "navn": "PHH910",
+     "txt": "Hårdt substrat (M05–M10, S05–S15). Fra medium drejning til finish, kontinuerligt til semi-afbrudt. Førstevalg til HRSA."
+    },
+    {
+     "kval": "PHH920",
+     "navn": "PHH920",
+     "txt": "Mest sej (M10–M25, S15–S30). Generel drejning af rustfrit og HRSA."
+    }
+   ]
+  },
+  "S": {
+   "kilde": "https://www.palbit.pt/uploads/Turning/Palbit-CHIPBREAKERS-FOR-STAINLESS-STEEL-HRSA-TURNING.pdf",
+   "regel": "Palbits PHH-familie er bygget på tre mikrokorn-substrater med forskellig balance mellem hårdhed og sejhed.",
+   "raekke": [
+    {
+     "kval": "PHH905",
+     "navn": "PHH905",
+     "txt": "Meget hårdt substrat (M01–M05, S01–S05). Optimeret til finish og finfinish i rustfrit og HRSA."
+    },
+    {
+     "kval": "PHH910",
+     "navn": "PHH910",
+     "txt": "Hårdt substrat (M05–M10, S05–S15). Fra medium drejning til finish, kontinuerligt til semi-afbrudt. Førstevalg til HRSA."
+    },
+    {
+     "kval": "PHH920",
+     "navn": "PHH920",
+     "txt": "Mest sej (M10–M25, S15–S30). Generel drejning af rustfrit og HRSA."
+    }
+   ]
+  }
+ }
+}

@@ -1,27 +1,21 @@
 {
  "operations": [
   {
-   "id": "turn_od",
-   "navn": "Drejning – udvendig",
-   "ikon": "⭕",
-   "drejning": true
-  },
-  {
-   "id": "turn_id",
-   "navn": "Drejning – indvendig (boring/udboring)",
-   "ikon": "🕳️",
+   "id": "turn",
+   "navn": "Drejning (udvendig og indvendig)",
+   "billede": "icons/wnmg.svg",
    "drejning": true
   },
   {
    "id": "mill",
    "navn": "Fræsning",
-   "ikon": "⚙️",
+   "billede": "icons/endmill-head.svg",
    "drejning": false
   },
   {
    "id": "drill",
-   "navn": "Boring (skifteplattebor)",
-   "ikon": "🎯",
+   "navn": "Boring (skiftepladebor)",
+   "billede": "icons/drill.svg",
    "drejning": false
   }
  ],

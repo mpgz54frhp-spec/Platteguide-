@@ -1,9 +1,9 @@
 {
- "_note": "Rækkefølgen går fra hård/slidstærk til sej/sikker. Udledt af fabrikantens egne beskrivelser. Vejledende, tjek altid kataloget.",
+ "_note": "Sorteres i appen efter de to sidste cifre: lavere tal = hårdere, højere tal = sejere (brugerens tommelfingerregel, i tråd med Sandviks ISO-anvendelsesområde, fx GC4325 = P25).",
  "sandvik": {
   "P": {
    "kilde": "https://www.sandvik.coromant.com/en-us/tools/inserts-grades/insert-grade-information/turning-inserts-grades/turning-inserts-grades-steel",
-   "regel": "Sandviks egen tommelfingerregel: højere skærehastighed giver mere plastisk deformation og kraterslid, så vælg den hårde. Æg-sikkerhed og modstand mod udbrud afhænger af, hvor stabile forholdene er, så vælg den sejere ved afbrudte snit eller ustabile forhold.",
+   "regel": "Sandvik: højere skærehastighed giver mere plastisk deformation og kraterslid. Vælg ud fra, hvor stabile forholdene er: afbrudte snit eller ustabilt = vælg sejere.",
    "raekke": [
     {
      "kval": "4405",
@@ -29,7 +29,7 @@
   },
   "M": {
    "kilde": "https://www.sandvik.coromant.com/en-us/tools/inserts-grades/insert-grade-information/turning-inserts-grades/turning-inserts-grades-stainless-steel",
-   "regel": "Rækkefølgen for rustfrit er mere vejledende: Sandvik angiver den ikke direkte som hård/sej.",
+   "regel": "",
    "raekke": [
     {
      "kval": "2220",
@@ -55,7 +55,7 @@
   },
   "K": {
    "kilde": "https://www.sandvik.coromant.com/en-us/tools/inserts-grades/insert-grade-information/turning-inserts-grades/turning-inserts-grades-cast-iron",
-   "regel": "Stålkvaliteterne (4405, 4415, 4425) er taget med, fordi Sandvik selv nævner dem som supplement i støbejern.",
+   "regel": "Stålkvaliteterne (44xx) er med, fordi Sandvik selv nævner dem som supplement i støbejern.",
    "raekke": [
     {
      "kval": "3210",
@@ -86,7 +86,7 @@
   },
   "S": {
    "kilde": "https://www.sandvik.coromant.com/en-us/tools/inserts-grades/insert-grade-information/turning-inserts-grades/turning-inserts-grades-for-titanium-hrsa",
-   "regel": "Til nikkelbaserede legeringer (S1). Til titan (S2) nævner Sandvik kun H13A.",
+   "regel": "",
    "raekke": [
     {
      "kval": "1205",
@@ -102,7 +102,7 @@
   },
   "H": {
    "kilde": "https://www.sandvik.coromant.com/en-us/tools/inserts-grades/insert-grade-information/turning-inserts-grades/turning-inserts-grades-hardened-steel",
-   "regel": "CBN-kvaliteter til indsats- og induktionshærdet stål. Valget afgøres af afbrydelser i snittet.",
+   "regel": "CBN-kvaliteter. Valget afgøres af afbrydelser i snittet.",
    "raekke": [
     {
      "kval": "CB7105",
@@ -167,6 +167,132 @@
      "kval": "PHH920",
      "navn": "PHH920",
      "txt": "Mest sej (M10–M25, S15–S30). Generel drejning af rustfrit og HRSA."
+    }
+   ]
+  }
+ },
+ "ceratizit": {
+  "P": {
+   "kilde": "https://cdn.plansee-group.com/is/content/planseemedia/gd_kp_kt-hk-06-21-60021-kp-03-drehen_sen_asc_pim",
+   "regel": "Ceratizits kvalitetsoversigt har pilen 'slidstærk ← → sej'. Ved jævnt snit vælges den hårde, ved afbrudt snit den sejeste.",
+   "raekke": [
+    {
+     "kval": "CTCP115-P",
+     "navn": "CTCP115-P (P15)",
+     "txt": "Slidstærk med høj varmebestandighed. Høje skærehastigheder, jævnt snit."
+    },
+    {
+     "kval": "CTCP125-P",
+     "navn": "CTCP125-P (P25)",
+     "txt": "Universal. God balance mellem sejhed og varmebestandighed, fra slut til skrub, skiftende forhold."
+    },
+    {
+     "kval": "CTCP135-P",
+     "navn": "CTCP135-P (P35)",
+     "txt": "Sej. Afbrudte snit, lave skærehastigheder, ustabile forhold."
+    }
+   ]
+  },
+  "M": {
+   "kilde": "https://cdn.plansee-group.com/is/content/planseemedia/gd_kp_kt-hk-06-21-60021-kp-03-drehen_sen_asc_pim",
+   "regel": "Rækkefølgen følger Ceratizits ISO-områder (M20, M25, M35).",
+   "raekke": [
+    {
+     "kval": "CTCM120",
+     "navn": "CTCM120 (M20)",
+     "txt": "Mere slidstærk. Jævnt snit."
+    },
+    {
+     "kval": "CTPM125",
+     "navn": "CTPM125 (M25)",
+     "txt": "Universal til rustfrit, fra slut til skrub, let afbrudt snit."
+    },
+    {
+     "kval": "CTCM130",
+     "navn": "CTCM130 (M35)",
+     "txt": "Sej. Afbrudt snit."
+    }
+   ]
+  },
+  "K": {
+   "kilde": "https://cdn.plansee-group.com/is/content/planseemedia/gd_kp_kt-hk-06-21-60021-kp-03-drehen_sen_asc_pim",
+   "regel": "Ceratizit angiver CTCK110 ved jævnt snit og CTCK120 ved afbrudt snit. De har ikke en længere beskrivelse i kataloget, jeg har læst.",
+   "raekke": [
+    {
+     "kval": "CTCK110",
+     "navn": "CTCK110",
+     "txt": "Anbefalet ved jævnt snit i støbejern."
+    },
+    {
+     "kval": "CTCK120",
+     "navn": "CTCK120",
+     "txt": "Anbefalet ved uens snitdybde og afbrudt snit i støbejern."
+    }
+   ]
+  }
+ },
+ "kennametal": {
+  "P": {
+   "kilde": "Tredjepart (Machining Doctor, CETS m.fl.), ikke Kennametals egen side. Kennametals sider blokerer automatiske opslag fra denne session.",
+   "regel": "Ikke bekræftet fra Kennametals egen side.",
+   "raekke": [
+    {
+     "kval": "KCP10B",
+     "navn": "KCP10B (P10–P20)",
+     "txt": "Slut til medium i stål."
+    },
+    {
+     "kval": "KCP25B",
+     "navn": "KCP25B (P20–P30)",
+     "txt": "Sejere. Medium til skrub."
+    }
+   ]
+  },
+  "M": {
+   "kilde": "Tredjepart (Machining Doctor, CETS m.fl.), ikke Kennametals egen side. Kennametals sider blokerer automatiske opslag fra denne session.",
+   "regel": "Ikke bekræftet fra Kennametals egen side.",
+   "raekke": [
+    {
+     "kval": "KCU10",
+     "navn": "KCU10",
+     "txt": "Finish til generel drejning, bredt hastigheds- og tilspændingsvindue."
+    },
+    {
+     "kval": "KCU25",
+     "navn": "KCU25 (M20–M30)",
+     "txt": "Sejere. Kantsejhed til afbrudte snit."
+    }
+   ]
+  },
+  "K": {
+   "kilde": "Tredjepart (Machining Doctor, CETS m.fl.), ikke Kennametals egen side. Kennametals sider blokerer automatiske opslag fra denne session.",
+   "regel": "Ikke bekræftet fra Kennametals egen side.",
+   "raekke": [
+    {
+     "kval": "KCK15",
+     "navn": "KCK15 (K10–K20)",
+     "txt": "Støbejernskvalitet."
+    },
+    {
+     "kval": "KCU25",
+     "navn": "KCU25 (K20–K30)",
+     "txt": "Sejere. Til afbrudte snit."
+    }
+   ]
+  },
+  "S": {
+   "kilde": "Tredjepart (Machining Doctor, CETS m.fl.), ikke Kennametals egen side. Kennametals sider blokerer automatiske opslag fra denne session.",
+   "regel": "Ikke bekræftet fra Kennametals egen side.",
+   "raekke": [
+    {
+     "kval": "KCU10",
+     "navn": "KCU10",
+     "txt": "Finish til generel drejning."
+    },
+    {
+     "kval": "KCU25",
+     "navn": "KCU25 (S20–S30)",
+     "txt": "Sejere."
     }
    ]
   }

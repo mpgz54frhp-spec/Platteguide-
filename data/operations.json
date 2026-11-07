@@ -14,7 +14,7 @@
   },
   {
    "id": "drill",
-   "navn": "Boring (skiftepladebor)",
+   "navn": "Boring (skifteplattebor)",
    "billede": "icons/drill.svg",
    "drejning": false
   }

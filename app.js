@@ -111,7 +111,7 @@ function sandvikList(){
   const ov=(D.start.overlap||{})[S.mat]||[], extra=[];
   for(const g of ov)for(const f of ((F[g]||{})[S.bearb]||[])){
     if(own.some(o=>o.brk===f.brk&&o.kval===f.kval)||extra.some(o=>o.brk===f.brk&&o.kval===f.kval))continue;
-    extra.push({...f,rolle:'alt',fra:g,note:'Stålplade, kan også bruges i støbejern. '+f.note})}
+    extra.push({...f,rolle:'alt',fra:g,note:'Stålplatte, kan også bruges i støbejern. '+f.note})}
   return own.concat(extra)}
 function sandvikForslag(){
   const lst=sandvikList(); if(!lst.length)return `<p class="mut">Ingen Sandvik-forslag lagt ind for ISO ${S.mat} / ${S.bearb}.</p>`;
@@ -119,18 +119,20 @@ function sandvikForslag(){
   return `<div class="mut" style="margin:.4rem 0"><b>Startforslag fra Sandvik</b></div>`+lst.map(f=>{
     const brk=utenBryder()?'':(f.brk||''); const gk=S.mat==='N'||S.mat==='H'; const kode=modelKomplet()&&!gk?sandvikKode(brk,f.kval):'';
     const navn=(f.brk&&!utenBryder()?f.brk+' ':'')+(/^\d/.test(f.kval)?'GC'+f.kval:f.kval);
-    return `<div class="card" style="margin:.4rem 0"><b>${navn}</b>${f.rolle==='foerst'?' ⭐ førstevalg':' · alternativ'}${f.fra?` <span class="badge" style="background:#2f6fdb">fra stål</span>`:''}${kode?`<div class="code" style="font-size:1.05rem">${kode}</div>`:''}<span class="mut">${f.note}</span><div style="margin-top:.5rem;display:flex;gap:.5rem;flex-wrap:wrap">${kode?`<a class="btn primary" style="flex:1" target="_blank" rel="noopener" href="${svUrl(kode)}">🔎 ${utenBryder()?'Søg':'Åbn'} ${kode}</a>`:`<a class="btn primary" style="flex:1" target="_blank" rel="noopener" href="${svUrl('GRADE:"'+f.kval.replace(/^GC/,'')+'"')}">🔎 Alle plader i ${navn}</a>`}<button data-use="${f.kval}" data-brk="${brk}" style="flex:0 0 auto">Brug som valg</button></div></div>`}).join('')
+    return `<div class="card" style="margin:.4rem 0"><b>${navn}</b>${f.rolle==='foerst'?' ⭐ førstevalg':' · alternativ'}${f.fra?` <span class="badge" style="background:#2f6fdb">fra stål</span>`:''}${kode?`<div class="code" style="font-size:1.05rem">${kode}</div>`:''}<span class="mut">${f.note}</span><div style="margin-top:.5rem;display:flex;gap:.5rem;flex-wrap:wrap">${kode?`<a class="btn primary" style="flex:1" target="_blank" rel="noopener" href="${svUrl(kode)}">🔎 ${utenBryder()?'Søg':'Åbn'} ${kode}</a>`:`<a class="btn primary" style="flex:1" target="_blank" rel="noopener" href="${svUrl('GRADE:"'+f.kval.replace(/^GC/,'')+'"')}">🔎 Alle platter i ${navn}</a>`}<button data-use="${f.kval}" data-brk="${brk}" style="flex:0 0 auto">Brug som valg</button></div></div>`}).join('')
     +`<p class="mut">Spånbryderens anvendelse (PF/MF = slut, PM/MM/KM/SM = medium, PR/MR/KR = skrub) stammer fra Sandviks eget katalog. ${st.verificeret} <a style="color:var(--acc)" target="_blank" rel="noopener" href="${st.kilde_grades}">Kvaliteter: Sandvik</a>. Tjek altid dit eget katalog.</p>`;
 }
+const rk=k=>{const m=String(k).match(/(\d\d)\D*$/);return m?parseInt(m[1]):0};
+const MN={sandvik:'Sandvik',palbit:'Palbit',ceratizit:'Ceratizit',kennametal:'Kennametal'};
 function guideBox(maker){
-  const G=(D.guide[maker]||{})[S.mat]; const navn=maker==='sandvik'?'Sandvik':'Palbit';
+  const G=(D.guide[maker]||{})[S.mat]; const navn=MN[maker]||maker;
   if(!G)return `<details class="guide"><summary>📘 Hård ↔ sej (${navn})</summary><p class="mut">Ingen hård/sej-rangering for ISO ${S.mat} fundet hos ${navn}. Jeg gætter ikke.</p></details>`;
-  const cur=new Set([S.kval, ...(maker==='sandvik'?sandvikList().map(f=>f.kval):[]), ...(maker==='palbit'?((palbitRec()||{}).kval||[]):[])].filter(Boolean));
+  const cur=new Set([S.kval, ...(maker==='sandvik'?sandvikList().map(f=>f.kval):[]), ...(maker==='palbit'?((palbitRec()||{}).kval||[]):[]),...((maker==='ceratizit'||maker==='kennametal')?gList(maker).map(f=>f.kval):[])].filter(Boolean));
   const hit=k=>cur.has(k)||cur.has(k.replace(/^GC/,''));
   return `<details class="guide"><summary>📘 Hård ↔ sej (${navn}, ISO ${S.mat})</summary>
   <div class="bar"></div><div class="lbl"><span>Hårdere · mere slidstærk</span><span>Sejere · mere sikker</span></div>
-  ${G.raekke.map((r,i)=>`<div class="gr${hit(r.kval)?' cur':''}"><div class="n">${i+1}</div><div><b>${r.navn}</b>${hit(r.kval)?' <span class="mut">(foreslået her)</span>':''}<br><span class="mut">${r.txt}</span></div></div>`).join('')}
-  <p class="mut">${G.regel}</p>
+  ${[...G.raekke].sort((a,b)=>rk(a.kval)-rk(b.kval)).map((r,i)=>`<div class="gr${hit(r.kval)?' cur':''}"><div class="n">${i+1}</div><div><b>${r.navn}</b>${hit(r.kval)?' <span class="mut">(foreslået her)</span>':''}<br><span class="mut">${r.txt}</span></div></div>`).join('')}
+  <p class="mut"><b>Tommelfingerregel:</b> jo lavere tal (de to sidste cifre), jo hårdere og mere slidstærk. Jo højere tal, jo sejere og mere sikker.${G.regel?' '+G.regel:''}</p>
   <p class="mut">Vejledende. Udledt af ${navn}s egne beskrivelser (<a style="color:var(--acc)" target="_blank" rel="noopener" href="${G.kilde}">kilde</a>). Tjek altid kataloget.</p></details>`;
 }
 function startKort(){
@@ -141,8 +143,36 @@ function startKort(){
   if(pr&&!mk)rows.push(`<div><b>Palbit:</b> ${pr.brk[0]}${pr.kval?' '+pr.kval[0]:''}</div>`);
   else if(pr&&pa.b)rows.push(`<div><b>Palbit:</b> <span class="code" style="font-size:1rem">${mk.slice(0,4)} ${mk.slice(4)}-${pa.b}${pa.g?' '+pa.g:''}</span>${pa.g?'':' · vælg kvalitet i listen'}${pr.status==='kilde'?'':' <span class="mut">(ikke bekræftet)</span>'}</div>`);
   else if(pr&&mk)rows.push(`<div><b>Palbit:</b> <span class="mut">ingen af de foreslåede spånbrydere (${pr.brk.join('/')}) findes til ${mk} – se listen nedenfor</span></div>`)
+  for(const x of D.manufacturers.makers.filter(m=>m.id==='ceratizit'||m.id==='kennametal')){
+    if(utenBryder()||S.mat==='N'||S.mat==='H'||!D.start[x.id])continue;
+    const f=gList(x.id).find(f=>f.rolle==='foerst'); if(!f)continue; const kode=gKode(x.id,f.brk,f.kval);
+    rows.push(`<div><b>${x.navn}:</b> ${kode?'<span class="code" style="font-size:1rem">'+kode+'</span>':(f.brk?f.brk+' ':'')+f.kval}${D.start[x.id].status==='ikke-bekraeftet'?' <span class="mut">(ikke bekræftet)</span>':''}</div>`)}
   if(!rows.length)return '';
   return `<div class="card ok"><b>🚀 Start her</b> <span class="mut">(til ${S.sub} · ${S.bearb})</span>${rows.join('')}<p class="mut" style="margin:.4rem 0 0">Udgangspunkt, ikke facit. Tjek i fabrikantens katalog, og ret ud fra dine forhold.</p></div>`;
+}
+function gList(id){
+  const st=D.start[id]; if(!st)return [];
+  const F=st.forslag, own=((F[S.mat]||{})[S.bearb]||[]).filter(f=>!f.sub||f.sub.includes(S.sub));
+  const ov=(D.start.overlap||{})[S.mat]||[], extra=[];
+  for(const g of ov)for(const f of ((F[g]||{})[S.bearb]||[])){
+    if(own.some(o=>o.brk===f.brk&&o.kval===f.kval)||extra.some(o=>o.brk===f.brk&&o.kval===f.kval))continue;
+    extra.push({...f,rolle:'alt',fra:g,note:'Stålplatte, kan også bruges i støbejern. '+f.note})}
+  return own.concat(extra)}
+function gKode(id,brk,kval){
+  const st=D.start[id]; if(!st||!st.format||!modelKomplet())return '';
+  const b=baseKode(), m=S.mdl;
+  return st.format.replace('{shape4}',b).replace('{size}',m.ic+m.tyk+m.rad).replace('-{brk}',brk?'-'+brk:'').replace('{kval}',kval)}
+function gUrl(x,q){return 'https://www.google.com/search?q='+encodeURIComponent('site:'+x.dom+' '+q)}
+function genericForslag(x){
+  const id=x.id, st=D.start[id]; if(!st)return '';
+  if(utenBryder())return `<p class="mut">Ingen platter uden spånbryder (…A) fundet hos ${x.navn}.</p>`;
+  if(S.mat==='N'||S.mat==='H')return `<p class="mut">Ingen forslag til ISO ${S.mat} fundet hos ${x.navn} til negative drejeplatter. Jeg gætter ikke.</p>`;
+  const lst=gList(id); if(!lst.length)return `<p class="mut">Ingen ${x.navn}-forslag fundet for ISO ${S.mat} / ${S.bearb}. Jeg gætter ikke.</p>`;
+  const bad=st.status==='ikke-bekraeftet';
+  return `<div class="mut" style="margin:.4rem 0"><b>Startforslag fra ${x.navn}</b>${bad?' · <b>ikke bekræftet</b> (tredjepart)':''}</div>`+lst.map(f=>{
+    const kode=gKode(id,f.brk,f.kval); const q=kode||((modelKomplet()?modelKode()+' ':'')+(f.brk?f.brk+' ':'')+f.kval);
+    return `<div class="card" style="margin:.4rem 0"><b>${f.brk?f.brk+' ':''}${f.kval}</b>${f.rolle==='foerst'?' ⭐ førstevalg':' · alternativ'}${f.fra?` <span class="badge" style="background:#2f6fdb">fra stål</span>`:''}${kode?`<div class="code" style="font-size:1.05rem">${kode}</div>`:''}<span class="mut">${f.note}</span><div style="margin-top:.5rem;display:flex;gap:.5rem;flex-wrap:wrap"><a class="btn primary" style="flex:1" target="_blank" rel="noopener" href="${gUrl(x,q)}">🔎 Søg ${kode||f.kval}</a><button data-use="${f.kval}" data-brk="${f.brk||''}" style="flex:0 0 auto">Brug som valg</button></div></div>`}).join('')
+    +`<p class="mut">${st.verificeret} <a style="color:var(--acc)" target="_blank" rel="noopener" href="${st.kilde.startsWith('http')?st.kilde:x.url}">Kilde</a>${st.kilde.startsWith('http')?'':': '+st.kilde}. Tjek altid dit eget katalog.</p>`;
 }
 function palbitAvail(){
   const rec=palbitRec(), mk=modelKomplet()?modelKode():''; if(!rec||!mk)return {rec,b:null,g:null};
@@ -173,7 +203,7 @@ function palbitForslag(){
     const pr=(D.start.palbit[g]||{})[S.bearb]; if(!pr)continue;
     const byG={}; for(const [b,gr,a] of items){const iso=P.iso[b+'|'+gr]; if(!iso||!iso.includes(g)||!pr.brk.includes(b))continue;(byG[b]??=[]).push([b,gr,a])}
     const ents=Object.entries(byG); if(!ents.length)continue;
-    h+=`<div class="mut" style="margin:.6rem 0 .2rem"><b>Stålplader (ISO ${g}) – kan også bruges i støbejern</b> <span class="badge" style="background:#2f6fdb">fra stål</span></div>`+ents.map(([b,l])=>chip(b,l)).join('')+`<p class="mut">Baseret på erfaring (stålplader fungerer også i støbejern), ikke på Palbits egen klassificering.</p>`;
+    h+=`<div class="mut" style="margin:.6rem 0 .2rem"><b>Stålplatter (ISO ${g}) – kan også bruges i støbejern</b> <span class="badge" style="background:#2f6fdb">fra stål</span></div>`+ents.map(([b,l])=>chip(b,l)).join('')+`<p class="mut">Baseret på erfaring (stålplatter fungerer også i støbejern), ikke på Palbits egen klassificering.</p>`;
   }
   if(rest.length)h+=`<details><summary class="mut">Øvrige varer i sortimentet til ISO ${S.mat} (${rest.reduce((a,[,l])=>a+l.length,0)})</summary>${rest.map(([b,l])=>chip(b,l)).join('')}</details>`;
   return h+`<p class="mut">Kilde: palbit.pt (produktdata, ISO-gruppen er Palbits egen klassificering).</p>`;
@@ -206,7 +236,7 @@ function r5(){
   ${startKort()}
   <h3>Søg hos fabrikant</h3>
   <div class="card"><b>Model</b><div class="code">${modelKode()||'alle typer'}</div><div class="row">${utenBryder()?'':`<div><label>Spånbryder (valgfri)</label><input id="brk" placeholder="fx PM" value="${S.brk||''}"></div>`}<div><label>Kvalitet (valgfri)</label><input id="kval" placeholder="fx 4325" value="${S.kval||''}"></div></div><p class="mut">Spånbryder og kvalitet hedder forskelligt hos hver fabrikant. Skriv dem selv ind.</p></div>
-  ${m.map(x=>`<div class="card"><b>${x.navn}</b><br><span class="mut">${x.tip}${x.verificeret?'':' (ikke verificeret)'}</span><br><br><a class="btn primary" target="_blank" rel="noopener" href="${soeg(x)}">🔎 Søg ${modelKode()||'platter'} hos ${x.navn} ↗</a><a class="btn" style="margin-top:.5rem" target="_blank" rel="noopener" href="${x.url}">Åbn forsiden ↗</a>${x.id==='sandvik'?sandvikForslag()+guideBox('sandvik'):x.id==='palbit'?palbitForslag()+guideBox('palbit'):''}${(x.extra||[]).map(e=>`<a class="btn" style="margin-top:.5rem" target="_blank" rel="noopener" href="${e.url}">${e.label} ↗ <span class="mut">(ikke testet)</span></a>`).join('')}</div>`).join('')}
+  ${m.map(x=>`<div class="card"><b>${x.navn}</b><br><span class="mut">${x.tip}${x.verificeret?'':' (ikke verificeret)'}</span><br><br><a class="btn primary" target="_blank" rel="noopener" href="${soeg(x)}">🔎 Søg ${modelKode()||'platter'} hos ${x.navn} ↗</a><a class="btn" style="margin-top:.5rem" target="_blank" rel="noopener" href="${x.url}">Åbn forsiden ↗</a>${x.id==='sandvik'?sandvikForslag()+guideBox('sandvik'):x.id==='palbit'?palbitForslag()+guideBox('palbit'):genericForslag(x)+guideBox(x.id)}${(x.extra||[]).map(e=>`<a class="btn" style="margin-top:.5rem" target="_blank" rel="noopener" href="${e.url}">${e.label} ↗ <span class="mut">(ikke testet)</span></a>`).join('')}</div>`).join('')}
   <div class="card"><b>Resumé (til indtastning)</b><pre style="white-space:pre-wrap;margin:.4rem 0">${resume}</pre><button id="cp">📋 Kopiér resumé</button></div>
   ${nav(true,null)}<div class="nav"><button data-act="edit">✏️ Ret valg</button><button data-act="reset">↺ Start forfra</button></div>`;
   app.querySelectorAll('[data-use]').forEach(b=>b.onclick=()=>{S.kval=b.dataset.use;if(b.dataset.brk!==undefined)S.brk=b.dataset.brk;save();render();scrollTo(0,0)});

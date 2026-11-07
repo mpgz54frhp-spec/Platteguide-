@@ -11,15 +11,6 @@
    "dom": "palbit.pt"
   },
   {
-   "id": "ceratizit",
-   "navn": "CERATIZIT",
-   "url": "https://cuttingtools.ceratizit.com/dk/da.html",
-   "verificeret": true,
-   "tip": "Brug produktsøgning eller 'Tool Finder' hvis tilgængelig.",
-   "extra": [],
-   "dom": "cuttingtools.ceratizit.com"
-  },
-  {
    "id": "sandvik",
    "navn": "Sandvik Coromant",
    "url": "https://www.sandvik.coromant.com/da-dk",
@@ -28,21 +19,6 @@
    "extra": [],
    "dom": "sandvik.coromant.com",
    "soegUrl": "https://www.sandvik.coromant.com/da-dk/search?q={q}"
-  },
-  {
-   "id": "kennametal",
-   "navn": "Kennametal",
-   "url": "https://www.kennametal.com/us/en/home.html",
-   "verificeret": true,
-   "tip": "Brug 'Product Catalog' / NOVO på siden.",
-   "extra": [
-    {
-     "label": "NOVO tool selector",
-     "url": "https://www.kennametal.com/us/en/resources/novo/select.html",
-     "testet": false
-    }
-   ],
-   "dom": "kennametal.com"
   }
  ],
  "_note2": "'dom' bruges til en Google-søgning begrænset til fabrikantens site. Fabrikanternes egne søge-URL'er er ikke fundet/testet.",

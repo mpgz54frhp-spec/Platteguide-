@@ -190,109 +190,167 @@
   ]
  },
  "storrelser": {
-  "_note": "Vejledende, ud fra gængs katalogpraksis og ISO 1832 – ikke fuldt verificeret mod standarden. Tjek altid mod katalog. IC = indskreven cirkel.",
+  "_note": "IC-målene er sammenlignet med Palbits katalog (2.357 varer): alle koder markeret 'bekraeftet' stemmer. W 04 (IC 6,35) findes ikke hos Palbit og er ikke bekræftet. Tjek altid mod katalog.",
   "C": {
    "06": {
     "ic": "6,35",
-    "std": false
+    "std": false,
+    "bekraeftet": true
+   },
+   "08": {
+    "ic": "7,94",
+    "std": false,
+    "bekraeftet": true
    },
    "09": {
     "ic": "9,525",
-    "std": false
+    "std": false,
+    "bekraeftet": true
    },
    "12": {
     "ic": "12,7",
-    "std": true
+    "std": true,
+    "bekraeftet": true
    },
    "16": {
     "ic": "15,875",
-    "std": false
+    "std": false,
+    "bekraeftet": true
    },
    "19": {
     "ic": "19,05",
-    "std": false
+    "std": false,
+    "bekraeftet": true
    },
    "25": {
     "ic": "25,4",
-    "std": false
+    "std": false,
+    "bekraeftet": true
    }
   },
   "D": {
    "07": {
     "ic": "6,35",
-    "std": false
+    "std": false,
+    "bekraeftet": true
    },
    "11": {
     "ic": "9,525",
-    "std": false
+    "std": false,
+    "bekraeftet": true
    },
    "15": {
     "ic": "12,7",
-    "std": true
+    "std": true,
+    "bekraeftet": true
    }
   },
   "W": {
    "04": {
     "ic": "6,35",
-    "std": false
+    "std": false,
+    "bekraeftet": false
    },
    "06": {
     "ic": "9,525",
-    "std": false
+    "std": false,
+    "bekraeftet": true
    },
    "08": {
     "ic": "12,7",
-    "std": true
+    "std": true,
+    "bekraeftet": true
+   },
+   "13": {
+    "ic": "19,05",
+    "std": false,
+    "bekraeftet": true
    }
   },
   "T": {
+   "08": {
+    "ic": "4,76",
+    "std": false,
+    "bekraeftet": true
+   },
+   "09": {
+    "ic": "5,56",
+    "std": false,
+    "bekraeftet": true
+   },
    "11": {
     "ic": "6,35",
-    "std": false
+    "std": false,
+    "bekraeftet": true
    },
    "16": {
     "ic": "9,525",
-    "std": false
+    "std": false,
+    "bekraeftet": true
    },
    "22": {
     "ic": "12,7",
-    "std": true
+    "std": true,
+    "bekraeftet": true
    },
    "27": {
     "ic": "15,875",
-    "std": false
+    "std": false,
+    "bekraeftet": true
+   },
+   "33": {
+    "ic": "19,05",
+    "std": false,
+    "bekraeftet": true
+   },
+   "44": {
+    "ic": "25,4",
+    "std": false,
+    "bekraeftet": true
    }
   },
   "S": {
    "09": {
     "ic": "9,525",
-    "std": false
+    "std": false,
+    "bekraeftet": true
    },
    "12": {
     "ic": "12,7",
-    "std": true
+    "std": true,
+    "bekraeftet": true
    },
    "15": {
     "ic": "15,875",
-    "std": false
+    "std": false,
+    "bekraeftet": true
    },
    "19": {
     "ic": "19,05",
-    "std": false
+    "std": false,
+    "bekraeftet": true
    },
    "25": {
     "ic": "25,4",
-    "std": false
+    "std": false,
+    "bekraeftet": true
    }
   },
   "V": {
    "11": {
     "ic": "6,35",
-    "std": false
+    "std": false,
+    "bekraeftet": true
    },
    "16": {
     "ic": "9,525",
-    "std": false
+    "std": false,
+    "bekraeftet": true
+   },
+   "22": {
+    "ic": "12,7",
+    "std": true,
+    "bekraeftet": true
    }
   },
   "R": {

@@ -8,7 +8,9 @@
    "verificeret": true,
    "tip": "Brug katalog/produktsøgning på siden.",
    "extra": [],
-   "dom": "palbit.pt"
+   "dom": "palbit.pt",
+   "soegUrl": "https://www.palbit.pt/en/search?p={q}",
+   "soegFormat": "palbit"
   },
   {
    "id": "sandvik",
@@ -18,9 +20,11 @@
    "tip": "Brug 'Find produkt'/CoroPlus-værktøjer på siden.",
    "extra": [],
    "dom": "sandvik.coromant.com",
-   "soegUrl": "https://www.sandvik.coromant.com/da-dk/search?q={q}"
+   "soegUrl": "https://www.sandvik.coromant.com/da-dk/search?q={q}",
+   "soegFormat": "sandvik"
   }
  ],
  "_note2": "'dom' bruges til en Google-søgning begrænset til fabrikantens site. Fabrikanternes egne søge-URL'er er ikke fundet/testet.",
- "_note3": "Sandvik soegUrl er testet i browser: søgning på fx WNMG 08 04 12-PR 4425 åbner produktsiden."
+ "_note3": "Sandvik soegUrl er testet i browser: søgning på fx WNMG 08 04 12-PR 4425 åbner produktsiden.",
+ "_note4": "Palbit-søgning testet: 'WNMG 080412-PM PHG115' giver præcis ét produkt."
 }

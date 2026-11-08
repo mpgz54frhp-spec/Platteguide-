@@ -10,13 +10,15 @@
    "id": "mill",
    "navn": "Fræsning",
    "billede": "icons/endmill-head.svg",
-   "drejning": false
+   "drejning": false,
+   "snart": true
   },
   {
    "id": "drill",
    "navn": "Boring (skifteplattebor)",
    "billede": "icons/drill.svg",
-   "drejning": false
+   "drejning": false,
+   "snart": true
   }
  ],
  "bearbejdning": [

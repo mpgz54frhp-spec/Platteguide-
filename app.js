@@ -293,15 +293,35 @@ const palDoc=g=>!!(D.pv.grader||{})[g];
 function palbitVaerdi(mk,brk,grades){
   const m=(D.pv.modeller||{})[mk]; const tb=m&&m[brk]; if(!tb)return [];
   const fams=[...new Set(grades.map(palFam).filter(Boolean))].filter(f=>tb[f]);
-  return fams.map(f=>{const e=tb[f];const vcs=grades.filter(g=>palFam(g)===f||(f==='PHH'&&/^PHH/.test(g))).map(g=>({g,r:((D.pv.vc||{})[S.mat]||{})[g]})).filter(x=>x.r);return {f,ap:e.ap,fn:e.fn,vcs}})
+  return fams.map(f=>{const e=tb[f];return {f,ap:e.ap,fn:e.fn}})
+}
+const NAERM=(arr,x)=>{let bi=0,bd=1e9;arr.forEach((v,i)=>{const d=Math.abs(v-x);if(d<bd){bd=d;bi=i}});return bi};
+function palVc(g){
+  const mm=(D.pv.vcMateriale||{})[S.sub]; if(!mm)return null;
+  const e=(((D.pv.vcTabel||{})[g]||{})[mm[1]]); if(!e)return null;
+  const f=num(S.f), idx=f>0?NAERM(e.fn,f):Math.min(1,e.fn.length-1);
+  return {grade:g,mat:(D.pv.vcMaterialeNavn||{})[mm[1]]||mm[1],fn:e.fn,vc:e.vc,idx,brugerF:f>0};
 }
 function palbitLinje(v){
   const t=(n,a,u)=>a&&a.length===3?`${n} <b>${fmt(a[0])}</b> (${fmt(a[1])}–${fmt(a[2])}) ${u}`:'';
   const chk=(x,a)=>{const r=num(x);if(!(r>0)||!a)return '';return r>=a[1]&&r<=a[2]?'✅':'⚠️'};
-  const vc=v.vcs.map(x=>`vc ${x.g}: ${fmt(x.r[0])}–${fmt(x.r[1])} m/min`).join(' · ');
-  const mine=[['ap',S.ap,v.ap],['f',S.f,v.fn]].map(([n,x,a])=>chk(x,a)?`${chk(x,a)} ${n} ${fmt(x)}`:'').concat(v.vcs.length&&num(S.vc)>0?[(num(S.vc)>=Math.min(...v.vcs.map(x=>x.r[0]))&&num(S.vc)<=Math.max(...v.vcs.map(x=>x.r[1])))?`✅ vc ${fmt(S.vc)}`:`⚠️ vc ${fmt(S.vc)}`]:[]).filter(Boolean).join(' · ');
-  return `<div class="sv">📈 Palbits skæredata (${D.pv.familieTekst[v.f]}): ${[t('f',v.fn,'mm/omdr.'),t('ap',v.ap,'mm')].filter(Boolean).join(' · ')}${vc?' · '+vc:''}${mine?`<br><span class="mut">Dine værdier: ${mine} (✅ i området, ⚠️ uden for)</span>`:''}</div>`;
+  const mine=[['ap',S.ap,v.ap],['f',S.f,v.fn]].map(([n,x,a])=>chk(x,a)?`${chk(x,a)} ${n} ${fmt(x)}`:'').filter(Boolean).join(' · ');
+  return `<div class="sv">📈 Palbits skæredata for netop denne plade (${D.pv.familieTekst[v.f]}): ${[t('f',v.fn,'mm/omdr.'),t('ap',v.ap,'mm')].filter(Boolean).join(' · ')}${mine?`<br><span class="mut">Dine værdier: ${mine} (✅ i området, ⚠️ uden for)</span>`:''}</div>`;
 }
+function palbitBrydder(br){
+  const x=(D.pv.spaanbryder||{})[br]; if(!x)return '';
+  const r=(a,u)=>a?`${fmt(a[0])}–${fmt(a[1])} ${u}`:'';
+  const mine=x.fn&&x.ap?[['f',S.f,x.fn],['ap',S.ap,x.ap]].map(([n,v,a])=>{const q=num(v);return q>0?`${q>=a[0]&&q<=a[1]?'✅':'⚠️'} ${n} ${fmt(v)}`:''}).filter(Boolean).join(' · '):'';
+  return `<div class="sv">🔧 Spånbryder ${br}: <b>${x.tier}</b>${x.fn?` · f ${r(x.fn,'mm/omdr.')} · ap ${r(x.ap,'mm')}`:''}<br><span class="mut">Palbits katalog (${D.pv.katalog.sider.split(' (')[0]}). Områder varierer med form, IC og radius.${mine?' Dine værdier: '+mine:''}</span></div>`;
+}
+function palbitVcLinjer(grades){
+  const rows=grades.map(palVc).filter(Boolean); if(!rows.length)return '';
+  return `<div class="sv">🚀 Anbefalet vc fra Palbit til <b>${rows[0].mat}</b> (m/min pr. tilspænding):`+rows.map(r=>{
+    const cells=r.fn.map((f,i)=>`<span class="${i===r.idx?'hl':''}">f ${fmt(f)}: ${r.vc[i][0]}–${r.vc[i][1]}</span>`).join(' · ');
+    const mv=num(S.vc), ok=mv>0?(mv>=r.vc[r.idx][0]&&mv<=r.vc[r.idx][1]?' ✅':' ⚠️'):'';
+    return `<div><b>${r.grade}</b>: ${cells}${ok?` <span class="mut">(dit vc ${fmt(S.vc)}${ok}, ved f ${fmt(r.fn[r.idx])})</span>`:''}</div>`}).join('')+`<div class="mut">Markeret kolonne = nærmeste tilspænding til din f${rows[0].brugerF?'':' (ingen f angivet, midterste vist)'}. Kilde: ${D.pv.katalog.navn}, side C-869.</div></div>`;
+}
+
 function palbitForslag(){
   const P=D.palbit, mk=modelKomplet()?modelKode():'', items=mk&&P.models[mk], rec=palbitRec();
   if(!mk)return `<p class="mut">Vælg en komplet model for at se Palbits sortiment.</p>`;
@@ -319,9 +339,9 @@ function palbitForslag(){
   const sortG=l=>[...l].sort((x,y)=>(palDoc(y[1])-palDoc(x[1]))||(rk(x[1])-rk(y[1])));
   const chip=(b,l,stal)=>{
     const sl=sortG(l), grades=[...new Set(sl.map(x=>x[1]))], br=b==='(ingen)'?'':b;
-    const vv=palbitVaerdi(mk,br,grades.filter(g=>!sl.find(x=>x[1]===g)?.[3]||true));
+    const vv=palbitVaerdi(mk,br,grades);const bryd=palbitBrydder(br), vcl=palbitVcLinjer(grades);
     const udok=sl.some(x=>!palDoc(x[1])), dok=sl.some(x=>palDoc(x[1]));
-    return `<div class="card" style="margin:.4rem 0"><b>${mk.slice(0,4)} ${mk.slice(4)}${br?'-'+br:''}</b><div class="chiprow">${sl.map(([bb,g,a,st])=>`<a class="btn${rec&&rec.kval&&rec.kval.includes(g)?' primary':''}${palDoc(g)?'':' undoc'}" style="padding:.4rem .6rem" target="_blank" rel="noopener" href="${link(bb,g,a)}" title="${(D.pv.grader||{})[g]||'ISO-område ikke angivet i Palbits PDF'}">${g}${st?' <small>stål</small>':''} ↗</a>`).join('')}</div>${sl.length>1&&dok?HINT:''}${udok&&dok?'<div class="mut" style="font-size:.72rem">Stiplede kvaliteter har intet dokumenteret ISO-område hos Palbit og står sidst.</div>':''}<button data-use="${sl[0][1]}" data-brk="${br}" style="margin-top:.4rem">Brug ${br?br+' ':''}som valg</button>${vv.length?`<details class="noter"><summary class="mut">Skæredata fra Palbit</summary>${vv.map(palbitLinje).join('')}</details>`:''}</div>`;
+    return `<div class="card" style="margin:.4rem 0"><b>${mk.slice(0,4)} ${mk.slice(4)}${br?'-'+br:''}</b>${(D.pv.spaanbryder||{})[br]?` <span class="mut">· ${D.pv.spaanbryder[br].tier}</span>`:''}<div class="chiprow">${sl.map(([bb,g,a,st])=>`<a class="btn${rec&&rec.kval&&rec.kval.includes(g)?' primary':''}${palDoc(g)?'':' undoc'}" style="padding:.4rem .6rem" target="_blank" rel="noopener" href="${link(bb,g,a)}" title="${(D.pv.grader||{})[g]||'ISO-område ikke angivet i Palbits PDF'}">${g}${st?' <small>stål</small>':''} ↗</a>`).join('')}</div>${sl.length>1&&dok?HINT:''}${udok&&dok?'<div class="mut" style="font-size:.72rem">Stiplede kvaliteter har intet dokumenteret ISO-område hos Palbit og står sidst.</div>':''}<button data-use="${sl[0][1]}" data-brk="${br}" style="margin-top:.4rem">Brug ${br?br+' ':''}som valg</button>${(vv.length||bryd||vcl)?`<details class="noter"><summary class="mut">Skæredata fra Palbit</summary>${bryd}${vv.map(palbitLinje).join('')}${vcl}</details>`:''}</div>`;
   };
   const recB=rec?rec.brk.filter(b=>byB[b]):[]; const rest=Object.entries(byB).filter(([b])=>!recB.includes(b)&&(!utenBryder()||b==='(ingen)'));
   let h='';
@@ -331,7 +351,7 @@ function palbitForslag(){
     h+=recB.length?recB.map(b=>chip(b,byB[b])).join('')+`<p class="mut">${rec.note}${rec.kval?` Anbefalede kvaliteter (fremhævet): ${rec.kval.join(', ')}.`:''}</p>`
        :`<p class="mut">Den foreslåede spånbryder (${rec.brk.join('/')}) findes ikke til ${mk} i Palbits katalog.</p>`;
   } else h+=`<p class="mut">Ingen Palbit-anbefaling for ISO ${S.mat} / ${S.bearb} fundet.</p>`;
-  if(!recB.some(b=>palbitVaerdi(mk,b==='(ingen)'?'':b,[...new Set(byB[b].map(x=>x[1]))]).length))h+=`<p class="mut">Skæredata (vc, f, ap): ingen fundet hos Palbit for denne spånbryder og model. Jeg gætter ikke.</p>`;
+  if(!recB.some(b=>{const br=b==='(ingen)'?'':b;const gs=[...new Set(byB[b].map(x=>x[1]))];return palbitVaerdi(mk,br,gs).length||(D.pv.spaanbryder||{})[br]||gs.some(g=>palVc(g))}))h+=`<p class="mut">Skæredata (vc, f, ap): ingen fundet hos Palbit for denne spånbryder, kvalitet og dit materiale. Jeg gætter ikke.</p>`;
   if(Object.keys(stalOnly).length)h+=`<div class="mut" style="margin:.6rem 0 .2rem"><b>Stålplatter (ISO P) – kan også bruges i støbejern</b> <span class="badge" style="background:#2f6fdb">fra stål</span></div>`+Object.entries(stalOnly).map(([b,l])=>chip(b,l,true)).join('')+`<p class="mut">Baseret på erfaring (stålplatter fungerer også i støbejern), ikke på Palbits egen klassificering. Stålkvaliteter i samme spånbryder-kort er mærket "stål".</p>`;
   else if(ov.length&&Object.values(byB).some(l=>l.some(x=>x[3])))h+=`<p class="mut">Kvaliteter mærket "stål" er stålplatter, der erfaringsmæssigt også kan bruges i støbejern, ikke Palbits egen klassificering.</p>`;
   if(rest.length)h+=`<details><summary class="mut">Øvrige varer i sortimentet til ISO ${S.mat} (${rest.reduce((a,[,l])=>a+l.length,0)})</summary>${rest.map(([b,l])=>chip(b,l)).join('')}</details>`;
@@ -349,11 +369,12 @@ function compareKort(){
   const palCell=()=>{if(!pa.rec||!pa.b)return ['–','–','–','–','–'];
     const items=(D.palbit.models[mk]||[]).filter(([b])=>b===pa.b).map(x=>x[1]), g=pa.g||items[0]||'';
     const v=palbitVaerdi(mk,pa.b,g?[g]:[])[0]; const t=a=>a&&a.length===3?`${fmt(a[0])} <span class="mut">(${fmt(a[1])}–${fmt(a[2])})</span>`:'–';
-    const vcr=v&&v.vcs[0]?`${fmt(v.vcs[0].r[0])}–${fmt(v.vcs[0].r[1])}`:'–';
-    return [pa.b,pa.g||'<span class="mut">vælg</span>',vcr,v?t(v.fn):'–',v?t(v.ap):'–']};
+    const pv=g?palVc(g):null, vcr=pv?`${pv.vc[pv.idx][0]}–${pv.vc[pv.idx][1]} <span class="mut">(f ${fmt(pv.fn[pv.idx])})</span>`:'–';
+    const bs=(D.pv.spaanbryder||{})[pa.b], rg=a=>a?`${fmt(a[0])}–${fmt(a[1])}`:'–';
+    return [pa.b,pa.g||'<span class="mut">vælg</span>',vcr,v?t(v.fn):(bs&&bs.fn?rg(bs.fn)+' <span class="mut">(område)</span>':'–'),v?t(v.ap):(bs&&bs.ap?rg(bs.ap)+' <span class="mut">(område)</span>':'–')]};
   const a=svCell(), b=palCell(); if(a[0]==='–'&&b[0]==='–')return '';
   const row=(n,x,y)=>`<tr><th>${n}</th><td>${x}</td><td>${y}</td></tr>`;
-  return `<div class="card"><b>⚖️ Sammenlign</b> <span class="mut">(${S.sub} · ${S.bearb} · ${mk})</span><table class="cmp"><tr><th></th><th>Sandvik</th><th>Palbit</th></tr>${row('Spånbryder',a[0],b[0])}${row('Kvalitet',a[1],b[1])}${row('vc (m/min)',a[2],b[2])}${row('f (mm/omdr.)',a[3],b[3])}${row('ap (mm)',a[4],b[4])}</table><p class="mut" style="margin:.3rem 0 0">Førstevalg fra hver. Tal: start (område). Palbits vc er et område uden startværdi. "–" = ikke fundet, ikke gættet.</p></div>`;
+  return `<div class="card"><b>⚖️ Sammenlign</b> <span class="mut">(${S.sub} · ${S.bearb} · ${mk})</span><table class="cmp"><tr><th></th><th>Sandvik</th><th>Palbit</th></tr>${row('Spånbryder',a[0],b[0])}${row('Kvalitet',a[1],b[1])}${row('vc (m/min)',a[2],b[2])}${row('f (mm/omdr.)',a[3],b[3])}${row('ap (mm)',a[4],b[4])}</table><p class="mut" style="margin:.3rem 0 0">Førstevalg fra hver. Tal: start (område). Palbits vc er et område (nærmeste tilspænding). "–" = ikke fundet, ikke gættet.</p></div>`;
 }
 
 /* ---------- trin 6: resultat ---------- */

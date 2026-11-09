@@ -273,7 +273,7 @@
  "palbit": {
   "_kilde": {
    "M_S": "https://www.palbit.pt/uploads/Turning/Palbit-CHIPBREAKERS-FOR-STAINLESS-STEEL-HRSA-TURNING.pdf",
-   "P_K": "Fra en forhandlers udtræk af Palbits katalog (ikke palbit.pt selv). Ikke bekræftet."
+   "P_K": "Palbit Catalogue 2026/2027, side C-481: MF = Finishing, PM/MR/ST = Medium, SS = Roughing to Medium, HR = Roughing."
   },
   "M": {
    "slut": {
@@ -315,47 +315,74 @@
     "brk": [
      "MF"
     ],
-    "note": "MF = semi-slut i stål. Kvalitet: vælg blandt dem, der findes. Palbit skriver ikke på sin side, hvilken der passer til slut.",
-    "status": "ikke-bekraeftet"
+    "note": "MF = Finishing (Palbits katalog). Kvalitet: PH2G115/PHG115 er de hårdere, til høje hastigheder og kontinuerligt snit (Palbits PDF'er).",
+    "status": "kilde",
+    "kval": [
+     "PH2G115",
+     "PHG115"
+    ]
    },
    "medium": {
     "brk": [
-     "PM"
+     "PM",
+     "MR"
     ],
-    "note": "PM = medium finish i stål.",
-    "status": "ikke-bekraeftet"
+    "note": "PM og MR = Medium (Palbits katalog). Kvalitet: PH2G125/PHG125 er førstevalg til de fleste stålopgaver (Palbits PDF'er).",
+    "status": "kilde",
+    "kval": [
+     "PH2G125",
+     "PHG125"
+    ]
    },
    "skrub": {
     "brk": [
-     "MR",
-     "HR"
+     "HR",
+     "SS",
+     "MR"
     ],
-    "note": "MR = medium skrub, HR = kraftig skrub.",
-    "status": "ikke-bekraeftet"
+    "note": "HR = Roughing, SS = Roughing to Medium (Palbits katalog). Kvalitet: PH2G125/PHG125 er førstevalg til de fleste stålopgaver (Palbits PDF'er).",
+    "status": "kilde",
+    "kval": [
+     "PH2G125",
+     "PHG125"
+    ]
    }
   },
   "K": {
    "slut": {
     "brk": [
+     "MF",
      "ST"
     ],
-    "note": "ST = semi-slut i støbejern.",
-    "status": "ikke-bekraeftet"
+    "note": "MF = Finishing, ST = Medium (Palbits katalog). Kvalitet: Palbits vc-tabel ordner PH5705 → PH5320 → PH5740 fra slidstyrke til sejhed, så valget følger den rækkefølge (ikke et udtrykkeligt førstevalg).",
+    "status": "kilde",
+    "kval": [
+     "PH5705"
+    ]
    },
    "medium": {
     "brk": [
-     "ST"
+     "ST",
+     "MR"
     ],
-    "note": "ST til støbejern.",
-    "status": "ikke-bekraeftet"
+    "note": "ST og MR = Medium (Palbits katalog). Kvalitet: Palbits vc-tabel ordner PH5705 → PH5320 → PH5740 fra slidstyrke til sejhed, så valget følger den rækkefølge (ikke et udtrykkeligt førstevalg).",
+    "status": "kilde",
+    "kval": [
+     "PH5320"
+    ]
    },
    "skrub": {
     "brk": [
+     "HR",
      "ST",
-     "HR"
+     "SS"
     ],
-    "note": "ST til skrub, HR til kraftig skrub.",
-    "status": "ikke-bekraeftet"
+    "note": "HR = Roughing, SS = Roughing to Medium (Palbits katalog). Kvalitet: Palbits vc-tabel ordner PH5705 → PH5320 → PH5740 fra slidstyrke til sejhed, så valget følger den rækkefølge (ikke et udtrykkeligt førstevalg).",
+    "status": "kilde",
+    "kval": [
+     "PH5740",
+     "PH5320"
+    ]
    }
   },
   "S": {

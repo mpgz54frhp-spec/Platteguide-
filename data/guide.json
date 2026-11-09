@@ -220,6 +220,27 @@
      "txt": "Sejeste i rækken. Ustabile forhold og afbrudt snit."
     }
    ]
+  },
+  "K": {
+   "kilde": "https://www.palbit.pt/indexable-tools-catalogue",
+   "regel": "Palbits katalog (side C-869) ordner støbejernskvaliteterne fra slidstyrke til sejhed. Der er ikke angivet ISO-tal, så rækkefølgen følger tallet og tabellen.",
+   "raekke": [
+    {
+     "kval": "PH5705",
+     "navn": "PH5705",
+     "txt": "Mest slidstærk. Højeste anbefalede hastigheder i støbejern."
+    },
+    {
+     "kval": "PH5320",
+     "navn": "PH5320",
+     "txt": "Mellem slidstyrke og sejhed."
+    },
+    {
+     "kval": "PH5740",
+     "navn": "PH5740",
+     "txt": "Sejest i rækken. Laveste hastigheder."
+    }
+   ]
   }
  }
 }

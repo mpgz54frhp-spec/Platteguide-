@@ -62,3 +62,9 @@ details.noter{margin-top:.5rem}
 details.noter summary{cursor:pointer}
 .svrow{padding:.5rem 0;border-top:1px solid var(--line)}
 .svrow .mini{margin-top:.3rem}
+a.btn.undoc{border-style:dashed;opacity:.85}
+a.btn small{font-size:.65rem;color:var(--mut);margin-left:.2rem}
+table.cmp{width:100%;border-collapse:collapse;margin:.5rem 0;font-size:.92rem}
+table.cmp th,table.cmp td{padding:.35rem .4rem;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+table.cmp tr:first-child th{color:var(--acc)}
+table.cmp th:first-child{color:var(--mut);font-weight:500;white-space:nowrap}

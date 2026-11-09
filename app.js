@@ -31,7 +31,7 @@ async function load(){
   try{
     if(new URLSearchParams(location.search).has('reset')){await hardReset(false);history.replaceState(null,'',location.pathname)}
     for(const n of ['materials','operations','insert-shapes','manufacturers','rules','palbit','start','guide'])D[n]=await getJSON(n);
-    D.svv=(await getJSON('sandvik-values',true))||{};
+    D.svv=(await getJSON('sandvik-values',true))||{};D.pv=(await getJSON('palbit-values',true))||{modeller:{},vc:{},grader:{}};
     restore();applyTheme();
     $('#theme').onclick=()=>{S.theme={auto:'light',light:'dark',dark:'auto'}[S.theme]||'auto';save();applyTheme()};
     if('serviceWorker' in navigator)navigator.serviceWorker.register('service-worker.js').catch(()=>{});
@@ -288,15 +288,41 @@ function palbitAvail(){
   return {rec,b:b||null,g:gs[0]||null};
 }
 function palbitRec(){const r=(D.start.palbit[S.mat]||{})[S.bearb];return r||null}
+const palFam=g=>/^PHS/.test(g)?'PHS':/^PHH/.test(g)?'PHH':/^PH2G(115|125)$/.test(g)?'PH2G':null;
+const palDoc=g=>!!(D.pv.grader||{})[g];
+function palbitVaerdi(mk,brk,grades){
+  const m=(D.pv.modeller||{})[mk]; const tb=m&&m[brk]; if(!tb)return [];
+  const fams=[...new Set(grades.map(palFam).filter(Boolean))].filter(f=>tb[f]);
+  return fams.map(f=>{const e=tb[f];const vcs=grades.filter(g=>palFam(g)===f||(f==='PHH'&&/^PHH/.test(g))).map(g=>({g,r:((D.pv.vc||{})[S.mat]||{})[g]})).filter(x=>x.r);return {f,ap:e.ap,fn:e.fn,vcs}})
+}
+function palbitLinje(v){
+  const t=(n,a,u)=>a&&a.length===3?`${n} <b>${fmt(a[0])}</b> (${fmt(a[1])}–${fmt(a[2])}) ${u}`:'';
+  const chk=(x,a)=>{const r=num(x);if(!(r>0)||!a)return '';return r>=a[1]&&r<=a[2]?'✅':'⚠️'};
+  const vc=v.vcs.map(x=>`vc ${x.g}: ${fmt(x.r[0])}–${fmt(x.r[1])} m/min`).join(' · ');
+  const mine=[['ap',S.ap,v.ap],['f',S.f,v.fn]].map(([n,x,a])=>chk(x,a)?`${chk(x,a)} ${n} ${fmt(x)}`:'').concat(v.vcs.length&&num(S.vc)>0?[(num(S.vc)>=Math.min(...v.vcs.map(x=>x.r[0]))&&num(S.vc)<=Math.max(...v.vcs.map(x=>x.r[1])))?`✅ vc ${fmt(S.vc)}`:`⚠️ vc ${fmt(S.vc)}`]:[]).filter(Boolean).join(' · ');
+  return `<div class="sv">📈 Palbits skæredata (${D.pv.familieTekst[v.f]}): ${[t('f',v.fn,'mm/omdr.'),t('ap',v.ap,'mm')].filter(Boolean).join(' · ')}${vc?' · '+vc:''}${mine?`<br><span class="mut">Dine værdier: ${mine} (✅ i området, ⚠️ uden for)</span>`:''}</div>`;
+}
 function palbitForslag(){
   const P=D.palbit, mk=modelKomplet()?modelKode():'', items=mk&&P.models[mk], rec=palbitRec();
   if(!mk)return `<p class="mut">Vælg en komplet model for at se Palbits sortiment.</p>`;
   if(!items)return `<p class="mut">${mk} findes ikke i Palbits katalog over drejeplatter (negative/positive, ekstern drejning).</p>`;
+  const ov=(D.start.overlap||{})[S.mat]||[];
   const byB={}; let n=0;
-  for(const [b,g,a] of items){const iso=P.iso[b+'|'+g]; if(iso&&!iso.includes(S.mat))continue; (byB[b||'(ingen)']??=[]).push([b,g,a]); n++}
-  if(!n)return `<p class="mut">${mk} findes hos Palbit, men ingen spånbryder/kvalitet er klassificeret til ISO ${S.mat}.</p>`;
+  for(const [b,g,a] of items){const iso=P.iso[b+'|'+g]; if(iso&&!iso.includes(S.mat))continue; (byB[b||'(ingen)']??=[]).push([b,g,a,false]); n++}
+  // overlap (K får stålkvaliteter): samles i samme spånbryder-kort, hvis den findes; ellers egen gruppe
+  const stalOnly={};
+  for(const g0 of ov){const pr=(D.start.palbit[g0]||{})[S.bearb]; if(!pr)continue;
+    for(const [b,gr,a] of items){const iso=P.iso[b+'|'+gr]; if(!iso||!iso.includes(g0)||!pr.brk.includes(b))continue;
+      if(byB[b||'(ingen)'])byB[b||'(ingen)'].push([b,gr,a,true]);else(stalOnly[b||'(ingen)']??=[]).push([b,gr,a,true])}}
+  if(!n&&!Object.keys(stalOnly).length)return `<p class="mut">${mk} findes hos Palbit, men ingen spånbryder/kvalitet er klassificeret til ISO ${S.mat}.</p>`;
   const link=(b,g,a)=>P.base+P.folder[mk.slice(0,2)]+'/insert-'+mk.slice(0,4).toLowerCase()+'-'+mk.slice(4)+'-'+(b?b.toLowerCase()+'-':'')+g.toLowerCase()+'-'+a.toLowerCase();
-  const chip=(b,l)=>`<div class="card" style="margin:.4rem 0"><b>${mk.slice(0,4)} ${mk.slice(4)}${b==='(ingen)'?'':'-'+b}</b><div class="chiprow">${[...l].sort((x,y)=>rk(x[1])-rk(y[1])).map(([bb,g,a])=>`<a class="btn${rec&&rec.kval&&rec.kval.includes(g)?' primary':''}" style="padding:.4rem .6rem" target="_blank" rel="noopener" href="${link(bb,g,a)}">${g} ↗</a>`).join('')}</div>${l.length>1?HINT:''}<button data-use="${l[0][1]}" data-brk="${b==='(ingen)'?'':b}" style="margin-top:.4rem">Brug ${b==='(ingen)'?'':b+' '}som valg</button></div>`;
+  const sortG=l=>[...l].sort((x,y)=>(palDoc(y[1])-palDoc(x[1]))||(rk(x[1])-rk(y[1])));
+  const chip=(b,l,stal)=>{
+    const sl=sortG(l), grades=[...new Set(sl.map(x=>x[1]))], br=b==='(ingen)'?'':b;
+    const vv=palbitVaerdi(mk,br,grades.filter(g=>!sl.find(x=>x[1]===g)?.[3]||true));
+    const udok=sl.some(x=>!palDoc(x[1])), dok=sl.some(x=>palDoc(x[1]));
+    return `<div class="card" style="margin:.4rem 0"><b>${mk.slice(0,4)} ${mk.slice(4)}${br?'-'+br:''}</b><div class="chiprow">${sl.map(([bb,g,a,st])=>`<a class="btn${rec&&rec.kval&&rec.kval.includes(g)?' primary':''}${palDoc(g)?'':' undoc'}" style="padding:.4rem .6rem" target="_blank" rel="noopener" href="${link(bb,g,a)}" title="${(D.pv.grader||{})[g]||'ISO-område ikke angivet i Palbits PDF'}">${g}${st?' <small>stål</small>':''} ↗</a>`).join('')}</div>${sl.length>1&&dok?HINT:''}${udok&&dok?'<div class="mut" style="font-size:.72rem">Stiplede kvaliteter har intet dokumenteret ISO-område hos Palbit og står sidst.</div>':''}<button data-use="${sl[0][1]}" data-brk="${br}" style="margin-top:.4rem">Brug ${br?br+' ':''}som valg</button>${vv.length?`<details class="noter"><summary class="mut">Skæredata fra Palbit</summary>${vv.map(palbitLinje).join('')}</details>`:''}</div>`;
+  };
   const recB=rec?rec.brk.filter(b=>byB[b]):[]; const rest=Object.entries(byB).filter(([b])=>!recB.includes(b)&&(!utenBryder()||b==='(ingen)'));
   let h='';
   if(rec){
@@ -305,16 +331,29 @@ function palbitForslag(){
     h+=recB.length?recB.map(b=>chip(b,byB[b])).join('')+`<p class="mut">${rec.note}${rec.kval?` Anbefalede kvaliteter (fremhævet): ${rec.kval.join(', ')}.`:''}</p>`
        :`<p class="mut">Den foreslåede spånbryder (${rec.brk.join('/')}) findes ikke til ${mk} i Palbits katalog.</p>`;
   } else h+=`<p class="mut">Ingen Palbit-anbefaling for ISO ${S.mat} / ${S.bearb} fundet.</p>`;
-  h+=`<p class="mut">Startværdier (vc, f, ap): ingen fundet hos Palbit for denne kombination. Jeg gætter ikke.</p>`;
-  const ov=(D.start.overlap||{})[S.mat]||[];
-  for(const g of ov){
-    const pr=(D.start.palbit[g]||{})[S.bearb]; if(!pr)continue;
-    const byG={}; for(const [b,gr,a] of items){const iso=P.iso[b+'|'+gr]; if(!iso||!iso.includes(g)||!pr.brk.includes(b))continue;(byG[b]??=[]).push([b,gr,a])}
-    const ents=Object.entries(byG); if(!ents.length)continue;
-    h+=`<div class="mut" style="margin:.6rem 0 .2rem"><b>Stålplatter (ISO ${g}) – kan også bruges i støbejern</b> <span class="badge" style="background:#2f6fdb">fra stål</span></div>`+ents.map(([b,l])=>chip(b,l)).join('')+`<p class="mut">Baseret på erfaring (stålplatter fungerer også i støbejern), ikke på Palbits egen klassificering.</p>`;
-  }
+  if(!recB.some(b=>palbitVaerdi(mk,b==='(ingen)'?'':b,[...new Set(byB[b].map(x=>x[1]))]).length))h+=`<p class="mut">Skæredata (vc, f, ap): ingen fundet hos Palbit for denne spånbryder og model. Jeg gætter ikke.</p>`;
+  if(Object.keys(stalOnly).length)h+=`<div class="mut" style="margin:.6rem 0 .2rem"><b>Stålplatter (ISO P) – kan også bruges i støbejern</b> <span class="badge" style="background:#2f6fdb">fra stål</span></div>`+Object.entries(stalOnly).map(([b,l])=>chip(b,l,true)).join('')+`<p class="mut">Baseret på erfaring (stålplatter fungerer også i støbejern), ikke på Palbits egen klassificering. Stålkvaliteter i samme spånbryder-kort er mærket "stål".</p>`;
+  else if(ov.length&&Object.values(byB).some(l=>l.some(x=>x[3])))h+=`<p class="mut">Kvaliteter mærket "stål" er stålplatter, der erfaringsmæssigt også kan bruges i støbejern, ikke Palbits egen klassificering.</p>`;
   if(rest.length)h+=`<details><summary class="mut">Øvrige varer i sortimentet til ISO ${S.mat} (${rest.reduce((a,[,l])=>a+l.length,0)})</summary>${rest.map(([b,l])=>chip(b,l)).join('')}</details>`;
-  return h+`<p class="mut">Kilde: palbit.pt (produktdata, ISO-gruppen er Palbits egen klassificering).</p>`;
+  return h+`<p class="mut">Kilde: palbit.pt (produktdata, ISO-gruppen er Palbits egen klassificering). Skæredata fra Palbits PDF'er.</p>`;
+}
+
+/* ---------- sammenligning Sandvik / Palbit ---------- */
+function compareKort(){
+  if(!modelKomplet())return '';
+  const sv=sandvikList().filter(f=>f.rolle==='foerst')[0], pa=palbitAvail(), mk=modelKode();
+  const gk=S.mat==='N'||S.mat==='H';
+  const svCell=()=>{if(!sv)return ['–','–','–','–'];const b=utenBryder()?'':(sv.brk||''),d=gk?null:svData(b,sv.kval);
+    const t=(a,u)=>{const r=rng(a);return r?`${fmt(r.s)} <span class="mut">(${fmt(r.lo)}–${fmt(r.hi)})</span>`:'–'};
+    return [b||'–',(/^\d/.test(sv.kval)?'GC':'')+sv.kval,d?t(d.vc):'–',d?t(d.fn):'–',d?t(d.ap):'–']};
+  const palCell=()=>{if(!pa.rec||!pa.b)return ['–','–','–','–','–'];
+    const items=(D.palbit.models[mk]||[]).filter(([b])=>b===pa.b).map(x=>x[1]), g=pa.g||items[0]||'';
+    const v=palbitVaerdi(mk,pa.b,g?[g]:[])[0]; const t=a=>a&&a.length===3?`${fmt(a[0])} <span class="mut">(${fmt(a[1])}–${fmt(a[2])})</span>`:'–';
+    const vcr=v&&v.vcs[0]?`${fmt(v.vcs[0].r[0])}–${fmt(v.vcs[0].r[1])}`:'–';
+    return [pa.b,pa.g||'<span class="mut">vælg</span>',vcr,v?t(v.fn):'–',v?t(v.ap):'–']};
+  const a=svCell(), b=palCell(); if(a[0]==='–'&&b[0]==='–')return '';
+  const row=(n,x,y)=>`<tr><th>${n}</th><td>${x}</td><td>${y}</td></tr>`;
+  return `<div class="card"><b>⚖️ Sammenlign</b> <span class="mut">(${S.sub} · ${S.bearb} · ${mk})</span><table class="cmp"><tr><th></th><th>Sandvik</th><th>Palbit</th></tr>${row('Spånbryder',a[0],b[0])}${row('Kvalitet',a[1],b[1])}${row('vc (m/min)',a[2],b[2])}${row('f (mm/omdr.)',a[3],b[3])}${row('ap (mm)',a[4],b[4])}</table><p class="mut" style="margin:.3rem 0 0">Førstevalg fra hver. Tal: start (område). Palbits vc er et område uden startværdi. "–" = ikke fundet, ikke gættet.</p></div>`;
 }
 
 /* ---------- trin 6: resultat ---------- */
@@ -349,6 +388,7 @@ function r5(){
   app.innerHTML=`<div class="rhead"><h2>Anbefaling</h2><button class="mini" id="fav">${isFav()?'⭐ Gemt':'☆ Gem som favorit'}</button></div>
   ${chips()}
   ${startKort()}
+  ${compareKort()}
   ${checks}
   <div class="card"><span class="badge" style="background:${g.farve}">${g.id}</span><b>ISO ${S.sub}</b> – ${g.sub.find(s=>s.id===S.sub).navn}<br><span class="mut">${R.materialeNoter[g.id]}</span></div>
   <h3>Søg hos fabrikant</h3>

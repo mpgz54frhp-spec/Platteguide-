@@ -130,7 +130,7 @@
  "palbit": {
   "M": {
    "kilde": "https://www.palbit.pt/uploads/Turning/Palbit-CHIPBREAKERS-FOR-STAINLESS-STEEL-HRSA-TURNING.pdf",
-   "regel": "Palbits PHH-familie er bygget på tre mikrokorn-substrater med forskellig balance mellem hårdhed og sejhed.",
+   "regel": "Palbits PHH- og PHS-kvaliteter har ISO-område i deres PDF'er (fx PHH905 M01–M05, PHS240 M25–M45), så rækkefølgen efter tallet passer.",
    "raekke": [
     {
      "kval": "PHH905",
@@ -146,6 +146,21 @@
      "kval": "PHH920",
      "navn": "PHH920",
      "txt": "Mest sej (M10–M25, S15–S30). Generel drejning af rustfrit og HRSA."
+    },
+    {
+     "kval": "PHS215",
+     "navn": "PHS215 (M10–M25)",
+     "txt": "Medium til høje hastigheder i rustfrit, godt snit (kontinuerligt)."
+    },
+    {
+     "kval": "PHS225",
+     "navn": "PHS225 (M15–M30)",
+     "txt": "Førstevalg til generel drejning af rustfrit."
+    },
+    {
+     "kval": "PHS240",
+     "navn": "PHS240 (M25–M45)",
+     "txt": "Førstevalg til skrub og tung skrub med afbrudt snit ved medium til lave hastigheder."
     }
    ]
   },
@@ -167,6 +182,42 @@
      "kval": "PHH920",
      "navn": "PHH920",
      "txt": "Mest sej (M10–M25, S15–S30). Generel drejning af rustfrit og HRSA."
+    }
+   ]
+  },
+  "P": {
+   "kilde": "https://www.palbit.pt/uploads/Turning/Palbit-PHOENIX-SHIELD.pdf",
+   "regel": "Palbits stålkvaliteter følger samme princip: lavere tal = hårdere (P05 → P35). Kun PHG- og PH2G-serierne er dokumenteret med ISO-område i Palbits PDF'er.",
+   "raekke": [
+    {
+     "kval": "PHG105",
+     "navn": "PHG105 (P05)",
+     "txt": "Hårdest i Palbits stålrække."
+    },
+    {
+     "kval": "PH2G115",
+     "navn": "PH2G115 (P15)",
+     "txt": "Hårdere kvalitet med bedre varmebestandighed. Høje hastigheder og kontinuerligt snit."
+    },
+    {
+     "kval": "PHG115",
+     "navn": "PHG115 (P15)",
+     "txt": "Kontinuerligt til let afbrudt snit, høj skærehastighed, hårde materialer."
+    },
+    {
+     "kval": "PH2G125",
+     "navn": "PH2G125 (P25)",
+     "txt": "Førstevalg til de fleste stålopgaver. Kontinuerligt eller afbrudt snit, skrub og slut."
+    },
+    {
+     "kval": "PHG125",
+     "navn": "PHG125 (P25)",
+     "txt": "Førstevalg til de fleste stålopgaver. Kontinuerligt til afbrudt snit."
+    },
+    {
+     "kval": "PHG140",
+     "navn": "PHG140 (P35)",
+     "txt": "Sejeste i rækken. Ustabile forhold og afbrudt snit."
     }
    ]
   }

@@ -1,5 +1,5 @@
-const C='platteguide-v15';
-const F=['./','index.html','style.css','app.js','manifest.webmanifest','icons/icon.svg','icons/wnmg.svg','icons/endmill-head.svg','icons/drill.svg','data/materials.json','data/operations.json','data/insert-shapes.json','data/manufacturers.json','data/rules.json','data/palbit.json','data/start.json','data/guide.json','data/sandvik-values.json','data/palbit-values.json'];
+const C='platteguide-v16';
+const F=['./','index.html','style.css','app.js','milling.js','manifest.webmanifest','icons/icon.svg','icons/wnmg.svg','icons/endmill-head.svg','icons/drill.svg','data/materials.json','data/operations.json','data/insert-shapes.json','data/manufacturers.json','data/rules.json','data/palbit.json','data/start.json','data/guide.json','data/sandvik-values.json','data/palbit-values.json','data/milling.json'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>Promise.allSettled(F.map(u=>c.add(u)))));self.skipWaiting()});
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x)))).then(()=>self.clients.claim())));
 // Network-first. Kun gode svar caches. Aldrig undefined tilbage: cache -> index.html -> 503.

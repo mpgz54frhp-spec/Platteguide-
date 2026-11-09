@@ -1,10 +1,11 @@
 'use strict';
 const V=3;
 const D={};
-const blank=()=>({op:null,mat:null,sub:null,shapes:[],bearb:null,r:'',ap:'',f:'',vc:'',mdl:{ic:'',tyk:'',rad:''},brk:'',kval:''});
+const blank=()=>({op:null,mat:null,sub:null,shapes:[],mtype:null,bearb:null,r:'',ap:'',f:'',vc:'',mdl:{ic:'',tyk:'',rad:''},brk:'',kval:''});
 const S=Object.assign({v:V,step:0,back:false,recent:[],fav:[],theme:'auto',fold:{}},blank());
 const $=s=>document.querySelector(s), app=$('#app');
 const STEPS=['Operation','Materiale','Plattetype','Bearbejdning','Data','Resultat'];
+const stepName=i=>i===2&&S.op==='mill'?'Fræsertype':STEPS[i];
 const fmt=v=>String(v).replace('.',',');
 const num=v=>parseFloat(String(v).replace(',','.'));
 const MN={sandvik:'Sandvik',palbit:'Palbit'};
@@ -31,6 +32,7 @@ async function load(){
   try{
     if(new URLSearchParams(location.search).has('reset')){await hardReset(false);history.replaceState(null,'',location.pathname)}
     for(const n of ['materials','operations','insert-shapes','manufacturers','rules','palbit','start','guide'])D[n]=await getJSON(n);
+    D.milling=(await getJSON('milling',true))||{typer:[],palbit:{grader:{},linjer:[],matRaekke:{},matNavn:{}},sandvik:{familier:{},grader:{},start:{}}};
     D.svv=(await getJSON('sandvik-values',true))||{};D.pv=(await getJSON('palbit-values',true))||{modeller:{},vc:{},grader:{}};
     restore();applyTheme();
     $('#theme').onclick=()=>{S.theme={auto:'light',light:'dark',dark:'auto'}[S.theme]||'auto';save();applyTheme()};
@@ -52,10 +54,11 @@ function restore(){
   if(opObj)S.op=opObj.id;
   if(grpO){S.mat=grpO.id;if(subOk)S.sub=o.sub}
   if(D.operations.bearbejdning.some(b=>b.id===o.bearb))S.bearb=o.bearb;
+  if(S.op==='mill'&&(D.milling.typer||[]).some(t=>t.id===o.mtype))S.mtype=o.mtype;
   if(Array.isArray(o.shapes))S.shapes=o.shapes.filter(x=>typeof x==='string').slice(0,12);
   if(o.mdl&&typeof o.mdl==='object')S.mdl={ic:String(o.mdl.ic||''),tyk:String(o.mdl.tyk||''),rad:String(o.mdl.rad||'')};
   for(const k of ['r','ap','f','vc','brk','kval'])if(typeof o[k]==='string'||typeof o[k]==='number')S[k]=String(o[k]);
-  S.step=(S.op&&S.sub&&S.bearb)?5:0;
+  S.step=(S.op&&S.sub&&S.bearb&&(S.op!=='mill'||S.mtype))?5:0;
 }
 const save=()=>{try{localStorage.setItem('pg',JSON.stringify(S))}catch(e){}};
 const op=()=>D.operations.operations.find(o=>o.id===S.op);
@@ -80,8 +83,8 @@ function bindNav(){
 }
 function render(){
   try{
-    $('#trin').textContent=`Trin ${S.step+1}/${STEPS.length}: ${STEPS[S.step]}${S.back&&S.step<5?' · retter valg':''}`;
-    ({0:r0,1:r1,2:r2,3:r3,4:r4,5:r5})[S.step]();
+    $('#trin').textContent=`Trin ${S.step+1}/${STEPS.length}: ${stepName(S.step)}${S.back&&S.step<5?' · retter valg':''}`;
+    ({0:r0,1:r1,2:isMill()?r2m:r2,3:r3,4:isMill()?r4m:r4,5:isMill()?r5m:r5})[S.step]();
     doScroll();
   }catch(e){fatal(e)}
 }
@@ -109,10 +112,10 @@ function shapeIcon(l){
   if(l==='R')return `<svg class="shp" viewBox="0 0 40 40"><circle cx="20" cy="20" r="15"/><circle cx="20" cy="20" r="3"/></svg>`;
   return P?`<svg class="shp" viewBox="0 0 40 40"><polygon points="${P}"/><circle cx="20" cy="20" r="3"/></svg>`:'';
 }
-const key=e=>JSON.stringify([e.op,e.mat,e.sub,e.bearb,e.shapes,e.mdl]);
-const completeSel=()=>!!(S.op&&S.mat&&S.sub&&S.bearb);
-function entry(){return {op:S.op,mat:S.mat,sub:S.sub,bearb:S.bearb,shapes:[...S.shapes],mdl:{...S.mdl},brk:S.brk,kval:S.kval,r:S.r,ap:S.ap,f:S.f,vc:S.vc}}
-const label=e=>`${e.sub} · ${e.bearb} · ${e.mdl&&e.mdl.ic&&e.shapes.length===1?e.shapes[0]+e.mdl.ic+e.mdl.tyk+e.mdl.rad:(e.shapes.join(', ')||'alle typer')}`;
+const key=e=>JSON.stringify([e.op,e.mat,e.sub,e.bearb,e.shapes,e.mdl,e.mtype||null]);
+const completeSel=()=>!!(S.op&&S.mat&&S.sub&&S.bearb&&(S.op!=='mill'||S.mtype));
+function entry(){return {op:S.op,mat:S.mat,sub:S.sub,bearb:S.bearb,mtype:S.mtype,shapes:[...S.shapes],mdl:{...S.mdl},brk:S.brk,kval:S.kval,r:S.r,ap:S.ap,f:S.f,vc:S.vc}}
+const label=e=>e.op==='mill'?`Fræsning · ${e.sub} · ${e.bearb} · ${mtNavn(e.mtype)}`:`${e.sub} · ${e.bearb} · ${e.mdl&&e.mdl.ic&&e.shapes.length===1?e.shapes[0]+e.mdl.ic+e.mdl.tyk+e.mdl.rad:(e.shapes.join(', ')||'alle typer')}`;
 function pushRecent(){
   if(!completeSel())return; const e=entry(), k=key(e);
   S.recent=[e,...S.recent.filter(x=>key(x)!==k)].slice(0,5);save();
@@ -128,7 +131,7 @@ function r0(){
   <h2 style="margin-top:1.2rem">Hvad skal du lave?</h2><div class="grid">${D.operations.operations.map(o=>o.snart
     ?`<button class="op snart" disabled><img class="opimg" src="${o.billede}" alt=""><b>${o.navn}</b><br><span class="badge" style="background:#6b7585">Kommer snart</span></button>`
     :`<button data-op="${o.id}" class="op ${S.op===o.id?'sel':''}"><img class="opimg" src="${o.billede}" alt=""><b>${o.navn}</b></button>`).join('')}</div>${nav(false,!!S.op)}`;
-  app.querySelectorAll('[data-op]').forEach(b=>b.onclick=()=>{if(S.op!==b.dataset.op){S.shapes=[]}S.op=b.dataset.op;sc('sec-nav');save();render()});
+  app.querySelectorAll('[data-op]').forEach(b=>b.onclick=()=>{if(S.op!==b.dataset.op){S.shapes=[];S.mtype=null}S.op=b.dataset.op;sc('sec-nav');save();render()});
   app.querySelectorAll('[data-hq]').forEach(b=>b.onclick=()=>openEntry(hist[+b.dataset.hq].e));
   bindNav();
 }

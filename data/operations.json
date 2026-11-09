@@ -10,8 +10,7 @@
    "id": "mill",
    "navn": "Fræsning",
    "billede": "icons/endmill-head.svg",
-   "drejning": false,
-   "snart": true
+   "drejning": false
   },
   {
    "id": "drill",

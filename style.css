@@ -70,3 +70,7 @@ table.cmp tr:first-child th{color:var(--acc)}
 table.cmp th:first-child{color:var(--mut);font-weight:500;white-space:nowrap}
 .sv .hl{background:var(--sel);border-radius:4px;padding:0 .2rem;font-weight:600}
 .sv div{margin-top:.25rem}
+span.btn.pill{cursor:default;text-align:center}
+span.btn.pill small{display:block;margin:0;font-weight:400}
+
+.chiprow span.btn.pill{flex:1 1 calc(50% - .4rem);min-width:7rem;padding:.4rem .5rem}

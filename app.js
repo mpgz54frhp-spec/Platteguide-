@@ -10,6 +10,23 @@ const fmt=v=>String(v).replace('.',',');
 const num=v=>parseFloat(String(v).replace(',','.'));
 const MN={sandvik:'Sandvik',palbit:'Palbit'};
 const RADIER=[0.4,0.8,1.2,1.6,2.4];
+const VER='v17', DATADATO='nov. 2026';
+/* rensning af alt, der kommer fra felter eller telefonens lager */
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clN=v=>String(v??'').replace(/[^0-9.,]/g,'').slice(0,8);
+const clT=v=>String(v??'').replace(/[^A-Za-z0-9 .+\/()-]/g,'').trim().slice(0,20);
+const c2=v=>String(v??'').replace(/[^A-Z0-9]/g,'').slice(0,2);
+function cleanEntry(o){
+  if(!o||typeof o!=='object')return null;
+  const opv=o.op==='turn_od'||o.op==='turn_id'?'turn':o.op;
+  const opObj=D.operations.operations.find(x=>x.id===opv&&!x.snart); if(!opObj)return null;
+  const g=D.materials.groups.find(x=>x.id===o.mat); if(!g||!g.sub.some(s=>s.id===o.sub))return null;
+  if(!D.operations.bearbejdning.some(b=>b.id===o.bearb))return null;
+  const mill=opObj.id==='mill'; if(mill&&!(D.milling.typer||[]).some(t=>t.id===o.mtype))return null;
+  const koder=D['insert-shapes'].turning.map(x=>x.kode), md=o.mdl&&typeof o.mdl==='object'?o.mdl:{};
+  return {op:opObj.id,mat:g.id,sub:o.sub,bearb:o.bearb,mtype:mill?o.mtype:null,shapes:mill||!Array.isArray(o.shapes)?[]:o.shapes.filter(k=>koder.includes(k)).slice(0,12),
+    mdl:{ic:c2(md.ic),tyk:c2(md.tyk),rad:c2(md.rad)},brk:clT(o.brk),kval:clT(o.kval),r:clN(o.r),ap:clN(o.ap),f:clN(o.f),vc:clN(o.vc)};
+}
 
 /* ---------- start, nulstilling, fejlskærm ---------- */
 async function getJSON(n,valgfri){
@@ -24,21 +41,43 @@ async function hardReset(genindlaes=true){
 }
 function fatal(e){
   console.error(e);
-  app.innerHTML=`<div class="card warn"><h2>Noget gik galt</h2><p>Appen kunne ikke vises. Det skyldes ofte gamle gemte data eller dårlig forbindelse.</p><p class="mut">${String(e&&e.message||e).replace(/</g,'&lt;')}</p><button class="primary" id="fx">Nulstil og prøv igen</button></div>`;
+  app.innerHTML=`<div class="card warn"><h2>Noget gik galt</h2><p>Appen kunne ikke vises. Det skyldes ofte gamle gemte data eller dårlig forbindelse.</p><p class="mut">${esc(e&&e.message||e)}</p><button class="primary" id="fx">Nulstil og prøv igen</button></div>`;
   $('#trin').textContent='';
   $('#fx').onclick=()=>hardReset(true);
 }
 async function load(){
   try{
     if(new URLSearchParams(location.search).has('reset')){await hardReset(false);history.replaceState(null,'',location.pathname)}
-    for(const n of ['materials','operations','insert-shapes','manufacturers','rules','palbit','start','guide'])D[n]=await getJSON(n);
-    D.milling=(await getJSON('milling',true))||{typer:[],palbit:{grader:{},linjer:[],matRaekke:{},matNavn:{}},sandvik:{familier:{},grader:{},start:{}}};
-    D.svv=(await getJSON('sandvik-values',true))||{};D.pv=(await getJSON('palbit-values',true))||{modeller:{},vc:{},grader:{}};
+    const KRAV=['materials','operations','insert-shapes','manufacturers','rules','palbit','start','guide'];
+    const [krav,mi,svv,pv]=await Promise.all([Promise.all(KRAV.map(n=>getJSON(n))),getJSON('milling',true),getJSON('sandvik-values',true),getJSON('palbit-values',true)]);
+    KRAV.forEach((n,i)=>D[n]=krav[i]);
+    D.milling=mi||{typer:[],palbit:{grader:{},linjer:[],matRaekke:{},matNavn:{}},sandvik:{familier:{},grader:{},start:{}}};
+    D.svv=svv||{};D.pv=pv||{modeller:{},vc:{},grader:{}};
+    const ft=document.querySelector('footer');if(ft)ft.insertAdjacentHTML('beforeend',`<br>Version ${VER} · katalogdata hentet ${DATADATO}`);
     restore();applyTheme();
     $('#theme').onclick=()=>{S.theme={auto:'light',light:'dark',dark:'auto'}[S.theme]||'auto';save();applyTheme()};
-    if('serviceWorker' in navigator)navigator.serviceWorker.register('service-worker.js').catch(()=>{});
+    swSetup();
     render();
   }catch(e){fatal(e)}
+}
+/* ---------- service worker + besked om ny version ---------- */
+function swSetup(){
+  if(!('serviceWorker' in navigator))return;
+  let vil=false;
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(vil)location.reload()});
+  const vis=w=>{
+    if(document.getElementById('upd'))return;
+    const b=document.createElement('button');b.id='upd';b.className='upd';b.textContent='🔄 Ny version klar – tryk for at opdatere';
+    b.onclick=()=>{vil=true;b.textContent='Opdaterer …';w.postMessage('skip');setTimeout(()=>location.reload(),4000)};
+    document.body.appendChild(b);
+  };
+  navigator.serviceWorker.register('service-worker.js').then(reg=>{
+    const foelg=w=>{if(w)w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)vis(w)})};
+    if(reg.waiting&&navigator.serviceWorker.controller)vis(reg.waiting);
+    foelg(reg.installing);
+    reg.addEventListener('updatefound',()=>foelg(reg.installing));
+    reg.update().catch(()=>{});
+  }).catch(()=>{});
 }
 function applyTheme(){
   document.documentElement.dataset.theme=S.theme;
@@ -47,7 +86,7 @@ function applyTheme(){
 }
 function restore(){
   let o={};try{o=JSON.parse(localStorage.getItem('pg')||'{}')||{}}catch(e){}
-  Object.assign(S,blank(),{v:V,back:false,recent:Array.isArray(o.recent)?o.recent.slice(0,5):[],fav:Array.isArray(o.fav)?o.fav.slice(0,12):[],theme:['auto','light','dark'].includes(o.theme)?o.theme:'auto',fold:(o.fold&&typeof o.fold==='object')?o.fold:{}});
+  Object.assign(S,blank(),{v:V,back:false,recent:Array.isArray(o.recent)?o.recent.map(cleanEntry).filter(Boolean).slice(0,5):[],fav:Array.isArray(o.fav)?o.fav.map(cleanEntry).filter(Boolean).slice(0,12):[],theme:['auto','light','dark'].includes(o.theme)?o.theme:'auto',fold:(o.fold&&typeof o.fold==='object')?o.fold:{}});
   if(o.op==='turn_od'||o.op==='turn_id')o.op='turn';
   const ops=D.operations.operations, opObj=ops.find(x=>x.id===o.op&&!x.snart);
   const grpO=D.materials.groups.find(g=>g.id===o.mat), subOk=grpO&&grpO.sub.some(s=>s.id===o.sub);
@@ -55,9 +94,9 @@ function restore(){
   if(grpO){S.mat=grpO.id;if(subOk)S.sub=o.sub}
   if(D.operations.bearbejdning.some(b=>b.id===o.bearb))S.bearb=o.bearb;
   if(S.op==='mill'&&(D.milling.typer||[]).some(t=>t.id===o.mtype))S.mtype=o.mtype;
-  if(Array.isArray(o.shapes))S.shapes=o.shapes.filter(x=>typeof x==='string').slice(0,12);
-  if(o.mdl&&typeof o.mdl==='object')S.mdl={ic:String(o.mdl.ic||''),tyk:String(o.mdl.tyk||''),rad:String(o.mdl.rad||'')};
-  for(const k of ['r','ap','f','vc','brk','kval'])if(typeof o[k]==='string'||typeof o[k]==='number')S[k]=String(o[k]);
+  if(Array.isArray(o.shapes)){const koder=D['insert-shapes'].turning.map(x=>x.kode);S.shapes=o.shapes.filter(x=>koder.includes(x)).slice(0,12)}
+  if(o.mdl&&typeof o.mdl==='object')S.mdl={ic:c2(o.mdl.ic),tyk:c2(o.mdl.tyk),rad:c2(o.mdl.rad)};
+  for(const k of ['r','ap','f','vc'])S[k]=clN(o[k]);S.brk=clT(o.brk);S.kval=clT(o.kval);
   S.step=(S.op&&S.sub&&S.bearb&&(S.op!=='mill'||S.mtype))?5:0;
 }
 const save=()=>{try{localStorage.setItem('pg',JSON.stringify(S))}catch(e){}};
@@ -122,7 +161,7 @@ function pushRecent(){
 }
 const isFav=()=>S.fav.some(x=>key(x)===key(entry()));
 function toggleFav(){const k=key(entry());S.fav=S.fav.some(x=>key(x)===k)?S.fav.filter(x=>key(x)!==k):[entry(),...S.fav].slice(0,12);save()}
-function openEntry(e){Object.assign(S,blank(),{back:false},JSON.parse(JSON.stringify(e)));S.step=5;save();render();scrollTo(0,0)}
+function openEntry(e){const c=cleanEntry(e);if(!c)return;Object.assign(S,blank(),{back:false},c);S.step=5;save();render();scrollTo(0,0)}
 
 /* ---------- trin 1: operation ---------- */
 function r0(){
@@ -216,7 +255,7 @@ function r4(){
   <div id="rsug">${radiusForslag()}</div>
   ${sv?`<div class="card" style="margin-top:1rem"><b>Sandviks startværdier</b> for ${sandvikKode(brk,first.kval)}:<br>${svLinje(brk,first.kval).replace('📈 Sandviks startværdier','Til')}</div>`:''}
   ${nav(true,true,'Vis resultat →')}`;
-  for(const id of ['r','f','ap','vc'])$('#'+id).oninput=e=>{S[id]=e.target.value.trim();save();if(id==='f'){$('#rsug').innerHTML=radiusForslag();bindR()}};
+  for(const id of ['r','f','ap','vc'])$('#'+id).oninput=e=>{S[id]=clN(e.target.value);save();if(id==='f'){$('#rsug').innerHTML=radiusForslag();bindR()}};
   const bindR=()=>app.querySelectorAll('[data-setr]').forEach(b=>b.onclick=()=>{S.r=b.dataset.setr;const code=Object.entries(D['insert-shapes'].iso1832.radius).find(([k,v])=>v===+b.dataset.setr);if(code&&baseKode())S.mdl.rad=code[0];save();render()});
   bindR();bindNav();
 }
@@ -416,13 +455,13 @@ function r5(){
   ${checks}
   <div class="card"><span class="badge" style="background:${g.farve}">${g.id}</span><b>ISO ${S.sub}</b> – ${g.sub.find(s=>s.id===S.sub).navn}<br><span class="mut">${R.materialeNoter[g.id]}</span></div>
   <h3>Søg hos fabrikant</h3>
-  <div class="card"><b>Model</b><div class="code">${modelKode()||'alle typer'}</div><div class="row">${utenBryder()?'':`<div><label>Spånbryder (valgfri)</label><input id="brk" placeholder="fx PM" value="${S.brk||''}"></div>`}<div><label>Kvalitet (valgfri)</label><input id="kval" placeholder="fx 4325" value="${S.kval||''}"></div></div><p class="mut">Spånbryder og kvalitet hedder forskelligt hos hver fabrikant. Skriv dem selv ind.</p></div>
+  <div class="card"><b>Model</b><div class="code">${modelKode()||'alle typer'}</div><div class="row">${utenBryder()?'':`<div><label>Spånbryder (valgfri)</label><input id="brk" placeholder="fx PM" value="${esc(S.brk)}"></div>`}<div><label>Kvalitet (valgfri)</label><input id="kval" placeholder="fx 4325" value="${esc(S.kval)}"></div></div><p class="mut">Spånbryder og kvalitet hedder forskelligt hos hver fabrikant. Skriv dem selv ind.</p></div>
   ${m.map(x=>`<details class="maker card" data-fold="${x.id}" ${S.fold[x.id]===false?'':'open'}><summary><b>${x.navn}</b> <span class="mut">· ${makerStatus(x.id)}</span></summary><div class="srow"><a class="btn primary" target="_blank" rel="noopener" href="${soeg(x)}">🔎 Søg ${modelKode()||'platter'} ↗</a><a class="btn" target="_blank" rel="noopener" href="${x.url}">Forside ↗</a></div>${x.id==='sandvik'?sandvikForslag()+guideBox('sandvik'):x.id==='palbit'?palbitForslag()+guideBox('palbit'):''}</details>`).join('')}
   <div class="card"><b>Resumé (til indtastning)</b><pre style="white-space:pre-wrap;margin:.4rem 0">${resume}</pre><div class="nav" style="margin-top:.4rem"><button id="cp">📋 Kopiér</button><button id="sh">📤 Del</button></div></div>
   ${nav(true,null)}<div class="nav"><button data-act="reset">↺ Start forfra</button></div>`;
   app.querySelectorAll('[data-use]').forEach(b=>b.onclick=()=>{S.kval=b.dataset.use;if(b.dataset.brk!==undefined)S.brk=b.dataset.brk;save();render();scrollTo(0,0)});
   app.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{S.back=true;go(+b.dataset.edit)});
-  for(const id of ['brk','kval']){const el=$('#'+id);if(el)el.onchange=e=>{S[id]=e.target.value.trim();save();render()}}
+  for(const id of ['brk','kval']){const el=$('#'+id);if(el)el.onchange=e=>{S[id]=clT(e.target.value);save();render()}}
   $('#fav').onclick=()=>{toggleFav();render()};
   $('#cp').onclick=()=>{navigator.clipboard?.writeText(resume);$('#cp').textContent='✅ Kopieret'};
   $('#sh').onclick=()=>{if(navigator.share)navigator.share({title:'Platteguide',text:resume}).catch(()=>{});else{navigator.clipboard?.writeText(resume);$('#sh').textContent='✅ Kopieret'}};

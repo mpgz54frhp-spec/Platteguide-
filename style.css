@@ -74,3 +74,4 @@ span.btn.pill{cursor:default;text-align:center}
 span.btn.pill small{display:block;margin:0;font-weight:400}
 
 .chiprow span.btn.pill{flex:1 1 calc(50% - .4rem);min-width:7rem;padding:.4rem .5rem}
+.upd{position:fixed;left:1rem;right:1rem;bottom:1rem;z-index:20;background:var(--acc);color:var(--onacc);font-weight:600;text-align:center;border:0;box-shadow:0 4px 16px rgba(0,0,0,.35)}

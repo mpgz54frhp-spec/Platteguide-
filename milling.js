@@ -47,17 +47,22 @@ function millPalbit(){
 }
 
 /* ---------- Sandvik ---------- */
-function svStartLinje(x,famList){
+function svStartData(x,famList){
   const SV=D.milling.sandvik;
   for(const f of famList){
     const e=SV.start[f+'|'+svNum(x.g)]; if(!e)continue;
     for(const it of e){
-      const ex=it.blocks.find(k=>k.sub.startsWith(S.sub)), b=ex||it.blocks.find(k=>k.letter===S.mat); if(!b)continue;
-      const t=(n,a,u)=>a?`${n} <b>${fmt(a[0])}</b>${a[1]!=null?` (${fmt(Math.min(a[1],a[2]))}–${fmt(Math.max(a[1],a[2]))})`:''} ${u}`:'';
-      return `<div class="sv">📈 Eksempel (${it.code}, ${ex?'':'nærmeste materiale '}${b.sub}${b.hb?', '+b.hb+' HB':''}): ${[t('vc',b.vc,'m/min'),t('fz',b.fz,'mm/tand')].filter(Boolean).join(' · ')}<br><span class="mut">Sandviks startværdier hører til netop denne plade. Andre geometrier/størrelser afviger.</span></div>`;
+      const ex=it.blocks.find(k=>k.sub.startsWith(S.sub)), b=ex||it.blocks.find(k=>k.letter===S.mat);
+      if(b)return {it,b,ex:!!ex,fam:f};
     }
   }
-  return '';
+  return null;
+}
+const svR=a=>a?`${fmt(a[0])}${a[1]!=null?` <span class="mut">(${fmt(Math.min(a[1],a[2]))}–${fmt(Math.max(a[1],a[2]))})</span>`:''}`:'–';
+function svStartLinje(x,famList){
+  const d=svStartData(x,famList); if(!d)return '';
+  const t=(n,a,u)=>a?`${n} <b>${fmt(a[0])}</b>${a[1]!=null?` (${fmt(Math.min(a[1],a[2]))}–${fmt(Math.max(a[1],a[2]))})`:''} ${u}`:'';
+  return `<div class="sv">📈 Eksempel (${d.it.code}, ${d.ex?'':'nærmeste materiale '}${d.b.sub}${d.b.hb?', '+d.b.hb+' HB':''}): ${[t('vc',d.b.vc,'m/min'),t('fz',d.b.fz,'mm/tand')].filter(Boolean).join(' · ')}<br><span class="mut">Sandviks startværdier hører til netop denne plade. Andre geometrier/størrelser afviger.</span></div>`;
 }
 function svGrades(){
   const SV=D.milling.sandvik, list=SV.grader[S.mat]||[];
@@ -116,6 +121,26 @@ function startKortM(){
   return `<div class="card ok"><b>🚀 Start her</b> <span class="mut">(til ${S.sub} · ${S.bearb} · ${mtNavn(S.mtype).toLowerCase()})</span>${rows.join('')}<p class="mut" style="margin:.4rem 0 0">Udgangspunkt, ikke facit. Kvalitet er valgt efter ${S.bearb} (slut = hårdest, skrub = sejest). Tjek i fabrikantens katalog.</p></div>`;
 }
 
+/* ---------- sammenligning ---------- */
+function compareKortM(){
+  const row=D.milling.palbit.matRaekke[S.sub], {inType}=svGrades(), fams=svFamilies(inType), L=palLines();
+  let a=['–','–','–','–'], b=['–','–','–','–'], eks='';
+  if(fams.length){
+    const g=pickGrade(inType,x=>x.rank,x=>x.tags), d=g?svStartData(g,g.fam[S.mtype].filter(z=>fams.includes(z))):null;
+    const fam=d?d.fam:(g?g.fam[S.mtype].find(z=>fams.includes(z)):fams[0]);
+    a=['CoroMill '+fam,g?g.g:'<span class="mut">vælg</span>',d?svR(d.b.vc):'–',d?svR(d.b.fz):'–'];
+    if(d)eks=` Sandviks tal er et eksempel for pladen ${d.it.code}${d.ex?'':' (nærmeste materiale '+d.b.sub+')'}.`;
+  }
+  if(L.length){
+    const best=L.find(x=>x.match.length)||L[0], g=pickGrade(best.gs,palRank,palTags)||best.gs[0];
+    const fz=best.l.fz.filter(f=>f.vals[row]).slice(0,2).map(f=>`${rng2(f.vals[row])} <span class="mut">(${f.col})</span>`).join('<br>');
+    b=[best.l.id,g,rng2(best.l.vc[g][row]),fz||'–'];
+  }
+  if(a[0]==='–'&&b[0]==='–')return '';
+  const r=(n,x,y)=>`<tr><th>${n}</th><td>${x}</td><td>${y}</td></tr>`;
+  return `<div class="card"><b>⚖️ Sammenlign</b> <span class="mut">(${S.sub} · ${S.bearb} · ${mtNavn(S.mtype).toLowerCase()})</span><table class="cmp"><tr><th></th><th>Sandvik</th><th>Palbit</th></tr>${r('Serie / linje',a[0],b[0])}${r('Kvalitet',a[1],b[1])}${r('vc (m/min)',a[2],b[2])}${r('fz (mm/tand)',a[3],b[3])}</table><p class="mut" style="margin:.3rem 0 0">Samme valg som i "Start her". Sandvik: start (område). Palbit: anbefalet område.${eks} "–" = ikke fundet, ikke gættet.</p></div>`;
+}
+
 /* ---------- trin 3: fræsertype ---------- */
 function r2m(){
   app.innerHTML=`<h2>Fræsertype</h2><div class="grid">${D.milling.typer.map(t=>`<button data-mt="${t.id}" class="${S.mtype===t.id?'sel':''}"><b>${t.navn}</b><br><span class="mut">${t.info}</span></button>`).join('')}</div><p class="mut">Profilfræsning kommer senere.</p>${nav(true,!!S.mtype)}`;
@@ -130,7 +155,7 @@ function r4m(){
   <div><label>Skærehastighed vc (m/min)</label><input id="vc" inputmode="decimal" value="${fmt(S.vc)}"></div></div>
   <div class="row"><div><label>Skæredybde ap (mm)</label><input id="ap" inputmode="decimal" value="${fmt(S.ap)}"></div><div></div></div>
   ${nav(true,true,'Vis resultat →')}`;
-  for(const id of ['f','ap','vc'])$('#'+id).oninput=e=>{S[id]=e.target.value.trim();save()};
+  for(const id of ['f','ap','vc'])$('#'+id).oninput=e=>{S[id]=clN(e.target.value);save()};
   bindNav();
 }
 
@@ -152,6 +177,7 @@ function r5m(){
   app.innerHTML=`<div class="rhead"><h2>Anbefaling</h2><button class="mini" id="fav">${isFav()?'⭐ Gemt':'☆ Gem som favorit'}</button></div>
   ${chipsM()}
   ${startKortM()}
+  ${compareKortM()}
   <div class="card"><span class="badge" style="background:${g.farve}">${g.id}</span><b>ISO ${S.sub}</b> – ${subNavn()}<br><span class="mut">${R.materialeNoter[g.id]}</span></div>
   <h3>Forslag pr. fabrikant</h3>
   ${m.map(x=>`<details class="maker card" data-fold="${x.id}" ${S.fold[x.id]===false?'':'open'}><summary><b>${x.navn}</b> <span class="mut">· ${statusM(x.id)}</span></summary><div class="srow">${links(x)}</div>${body(x)}</details>`).join('')}
